@@ -3,6 +3,10 @@ source 'https://rubygems.org'
 # Web Server
 gem "sinatra"
 
+# SpringSource
+gem "rest-client"
+gem "json"
+
 # Twitter
 gem "twitter"
 
