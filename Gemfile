@@ -3,6 +3,9 @@ source 'https://rubygems.org'
 # Web Server
 gem "sinatra"
 
+# Twitter
+gem "twitter"
+
 # Mongo Db
 gem "mongo"
 gem "bson_ext"
