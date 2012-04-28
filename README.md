@@ -33,13 +33,13 @@ Cassandra Setup
 ### In Linux
 Download from http://mirror.overthewire.com.au/pub/apache/cassandra/1.1.0/apache-cassandra-1.1.0-bin.tar.gz
 ``` 
-    $ tar -zxvf apache-cassandra-1.1.0-bin.tar.gz
-    $ cd apache-cassandra-1.1.0
-    $ sudo mkdir -p /var/log/cassandra
-    $ sudo chown -R $(whoami) /var/log/cassandra
-    $ sudo mkdir -p /var/lib/cassandra
-    $ sudo chown -R $(whoami) /var/lib/cassandra
-    $ export PATH="${PATH}:$(pwd)/bin"
+$ tar -zxvf apache-cassandra-1.1.0-bin.tar.gz
+$ cd apache-cassandra-1.1.0
+$ sudo mkdir -p /var/log/cassandra
+$ sudo chown -R $(whoami) /var/log/cassandra
+$ sudo mkdir -p /var/lib/cassandra
+$ sudo chown -R $(whoami) /var/lib/cassandra
+$ export PATH="${PATH}:$(pwd)/bin"
 ```
 ### Setup keyspace
     $ rake setup_cassandra
