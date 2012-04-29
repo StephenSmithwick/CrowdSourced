@@ -1,19 +1,22 @@
 source 'https://rubygems.org'
 
 # Web Server
-gem "sinatra"
+gem 'sinatra'
+
+# Testing
+gem 'rspec'
 
 # SpringSource
-gem "rest-client"
-gem "json"
+gem 'rest-client'
+gem 'json'
 
 # Twitter
-gem "twitter"
+gem 'twitter'
 
 # Mongo Db
-gem "mongo"
-gem "bson_ext"
+gem 'mongo'
+gem 'bson_ext'
 
 # Casandra Db
-gem "cassandra"
+gem 'cassandra'
 gem 'thrift_client', '0.7.1'

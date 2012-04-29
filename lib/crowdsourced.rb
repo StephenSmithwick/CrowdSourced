@@ -4,32 +4,18 @@ require 'twitter'
 require 'open-uri'
 require 'json'
 require 'rest-client'
-require_relative 'crowdsourced/has_properties'
+require_relative 'crowdsourced/term'
 
 # fetch data from springsense
 # curl http://api.springsense.com/disambiguate --data-ascii "ResMed Announces EasyCare Online Compliance Management Solution"
-class Term
-  include HasProperties
-  has_properties :term, :pos, :offset, :meaning, :definition
 
-  def initialize args
-    super
-  end
 
-  def to_s
-    "[term: #{@term}, pos: #{@pos}, offset:#{@offset}, meaning: #{@meaning}, definition: #{@definition}]"
-  end
-end
-
-sentence = 'ResMed Announces EasyCare Online Compliance Management Solution'
+sentence = 'I love you Central Baking Depot'
 springsense_url = 'http://api.springsense.com/disambiguate'
 
 response = JSON.parse(RestClient.post springsense_url, sentence)
-terms = response && response.first['terms'].map do |term|
-  meanings = term[meanings]
-  meaning = meanings && ! meanings.empy? && meanings.first
-  Term.new(:term => term['term'], :pos => term['POS'], :offset => term['offset'],
-           :meaning => meaning && meaning['meaning'], :definition => meaning && meaning['definition'])
+terms = response && response.first['terms'].map do |term_json|
+  Term.new term_json
 end
 puts terms
 
