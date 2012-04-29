@@ -19,3 +19,6 @@ doc/
 /.project
 /.buildpath
 /bin
+
+# Intellij Files
+*.iml
