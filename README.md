@@ -1,4 +1,5 @@
-CrowdSourced
+
+<img alt="CrowdSourced" src="https://github.com/StephenSmithwick/CrowdSourced/blob/master/assets/logo_with_alpha.png?raw=true" />
 ============
 
 A location based crowd sourcing review server.
