@@ -39,10 +39,13 @@ $ sudo mkdir -p /var/log/cassandra
 $ sudo chown -R $(whoami) /var/log/cassandra
 $ sudo mkdir -p /var/lib/cassandra
 $ sudo chown -R $(whoami) /var/lib/cassandra
-$ export PATH="${PATH}:$(pwd)/bin"
+$ export PATH="${PATH}:/home/user/apache-cassandra-1.1.0/bin"
 ```
 ### Setup keyspace
     $ rake setup_cassandra
 
 ### Run Cassandra
     $ rake run_cassandra
+
+#### Create Cassandra keyspace:
+	$ cassandra-cli -h localhost < CrowdSourced/store/store.rb

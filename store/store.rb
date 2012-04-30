@@ -1,4 +1,8 @@
-create keyspace CrowdSourced;
-use CrowdSourced;
+DROP KEYSPACE CrowdSourced;
 
-create column family Tweets with comparator = 'UTF8Type';
+CREATE KEYSPACE CrowdSourced;
+USE CrowdSourced;
+
+CREATE COLUMN FAMILY Tweets WITH COMPARATOR = 'UTF8Type';
+CREATE COLUMN FAMILY Cafes WITH COMPARATOR = 'UTF8Type';
+CREATE COLUMN FAMILY Suburbs WITH COMPARATOR = 'UTF8Type';
