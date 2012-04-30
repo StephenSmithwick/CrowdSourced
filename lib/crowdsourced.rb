@@ -4,11 +4,13 @@ require 'twitter'
 require 'open-uri'
 require 'json'
 require 'rest-client'
+require 'extensions/all'
+
 require_relative 'crowdsourced/term'
+require_relative 'crowdsourced/google_places'
 
 # fetch data from springsense
 # curl http://api.springsense.com/disambiguate --data-ascii "ResMed Announces EasyCare Online Compliance Management Solution"
-
 
 sentence = 'I love you Central Baking Depot'
 springsense_url = 'http://api.springsense.com/disambiguate'
@@ -19,36 +21,17 @@ terms = response && response.first['terms'].map do |term_json|
 end
 puts terms
 
-
-# Retrieves and persits Tweeter feeds
-def parse_tweets(store, city, geocode, term)
-  Twitter.search(term, :rpp => 3, :result_type => "recent", :geocode => geocode, :lang => "en").map do |tweet|
-    puts "#{tweet.from_user}: #{tweet.text}"
-    store.insert(:Tweets, city, {"#{tweet.id}" => "#{tweet.text}"});
-  end
-end
-
 # Connect to Cassandra
 store = Cassandra.new('CrowdSourced');
 
-# Get the list of cafes is Sydney from Google Places
-url = 'https://maps.googleapis.com/maps/api/place/search/json?location=-33.8670522,151.1957362&radius=3000&types=cafe&sensor=false&key=AIzaSyC2pDpNpBWnlNYnBUX363XV5Aog4UdOjeg'
-result = open(url) do |file|
-  result = JSON.parse(file.read)
-  result["results"].each do |location|
-    # Get the list of Tweets for this cafe in Sydney
-    puts location["name"]
-    parse_tweets store, 'Sydney', '33.8670522,151.1957362,3km', location["name"]
-  end
-end
+# Insert Suburbs
+store.insert(:Suburbs, '1', {"name" => "Circular Quay", "lat" => "33.861741", "lon" => "151.210579", "radius" => "300"});
+store.insert(:Suburbs, '2', {"name" => "Wynyard", "lat" => "33.865866", "lon" => "151.206256", "radius" => "400"});
+store.insert(:Suburbs, '3', {"name" => "The Rocks", "lat" => "33.859549", "lon" => "151.208605", "radius" => "300"});
+store.insert(:Suburbs, '4', {"name" => "Kirribilli", "lat" => "33.847559", "lon" => "151.213664", "radius" => "300"});
 
-# Display store content
-user = store.get(:Tweets, 'Sydney')
-user.each do |field|
-  puts field.inspect
-end
+# Update the list of Cafes
+update_cafes store
 
-# Clear store
-store.remove(:Tweets, 'Sydney')
-
-
+# Display stored tweets
+display_and_delete_tweets store
