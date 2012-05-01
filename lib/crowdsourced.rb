@@ -1,10 +1,14 @@
 require 'sinatra'
 require 'mongo'
 require 'twitter'
+require 'open-uri'
+require 'json'
 
-require_relative 'crowdsourced/twitter_feed'
+require_relative 'crowdsourced/twitter/twitter_feed'
 require_relative 'crowdsourced/review/review_processor'
+require_relative 'crowdsourced/cafe/cafe_processor'
 require_relative 'crowdsourced/dao/review_dao'
+require_relative 'crowdsourced/dao/suburbs_dao'
 
 class Crowdsourced
 
@@ -18,6 +22,19 @@ class Crowdsourced
     @title = 'about'
     "A little about me"
   end
+  
+  get '/init' do
+      @title = 'Initialize CrowdSourced'
+      "Initialize CrowdSourced"
+      
+      db = Mongo::Connection.new("localhost").db("mydb")
+      db.collection("Suburbs").drop
+      db.collection("Cafes").drop
+      db.collection("Tweets").drop
+      
+      @cafeProcessor = CafeProcessor.new() unless @cafeProcessor
+      @cafeProcessor.initializeCafes
+  end
 
   get '/hello/:name' do
 
@@ -27,21 +44,25 @@ class Crowdsourced
 
   get '/processTweetsSelectTerm' do
     @title = 'this is a form to select twitter'
+    
+    @suburbsDao = SuburbsDAO.new() unless @suburbsDao
+    @suburbs = @suburbsDao.findAll
+    
     erb :form
   end
 
 
   post '/processTweets' do
-
-    @twitterFeed = TwitterFeed.new() unless @twitterFeed
-
     @title = 'list of tweets that have been processed'
-
-    @messages = @twitterFeed.find_tweets params[:term]
+    
+    @suburbsDao = SuburbsDAO.new() unless @suburbsDao
+    suburb = @suburbsDao.findById params[:suburbId]
+    
+    @twitterFeed = TwitterFeed.new() unless @twitterFeed
+    @messages = @twitterFeed.findTweets params[:term], suburb["lat"], suburb["lon"], "3km"
 
     @reviewProcessor = ReviewProcessor.new() unless @reviewProcessor
     @reviewProcessor.processReviews @messages, params[:term]
-
 
     erb :resultsOfForm
   end
