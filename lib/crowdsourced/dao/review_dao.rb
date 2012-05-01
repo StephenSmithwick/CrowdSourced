@@ -1,3 +1,5 @@
+require 'mongo'
+
 class ReviewDAO
   def saveAll messages
     db = Mongo::Connection.new("localhost").db("mydb")

@@ -3,6 +3,8 @@ require 'mongo'
 require 'twitter'
 
 require_relative 'crowdsourced/twitter_feed'
+require_relative 'crowdsourced/review/review_processor'
+require_relative 'crowdsourced/dao/review_dao'
 
 class Crowdsourced
 
@@ -24,7 +26,7 @@ class Crowdsourced
   end
 
   get '/processTweetsSelectTerm' do
-    @title = 'this is a form'
+    @title = 'this is a form to select twitter'
     erb :form
   end
 
@@ -33,7 +35,7 @@ class Crowdsourced
 
     @twitterFeed = TwitterFeed.new() unless @twitterFeed
 
-    @title = 'list of tweets'
+    @title = 'list of tweets that have been processed'
 
     @messages = @twitterFeed.find_tweets params[:term]
 
@@ -46,8 +48,10 @@ class Crowdsourced
 
   get '/getReviews' do
 
-    @reviewsDAO = ReviewsDAO.new() unless @reviewsDAO
-    @reviews = ReviewsDAO.getAll
+    @title = 'list of reviews'
+
+    @reviewsDAO = ReviewDAO.new() unless @reviewsDAO
+    @reviews = @reviewsDAO.findAll
     erb :reviews
   end
 
