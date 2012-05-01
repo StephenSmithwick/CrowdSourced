@@ -4,51 +4,35 @@ require 'rspec'
 
 describe ReviewAnalyzer do
   before :all do
-    @reviewAnalyzer = ReviewAnalyzer.new
+    @analyzer = ReviewAnalyzer.new
   end
 
   describe '#analyze' do
     it "should identify non reviews" do
-      analysis = @reviewAnalyzer.analyze "twitter", "Hello twitter"
+      analysis = @analyzer.analyze "twitter", "Hello twitter"
 
       analysis.review?.should be_false
     end
 
     context "with a review" do
-      it "should identify a positive review" do
-        [
-            q(:term => "JuJu", :msg => "JuJu is my favorite"),
-            q(:term => "JuJu", :msg => "JuJu is my favourite"),
-            q(:term => "JuJu", :msg => "JuJu is good")
-        ].each do |q|
-          result = @reviewAnalyzer.analyze q.term, q.msg
-
-          result.review?.should be_true, "not identified as a review"
-          result.liked?.should be_true, "is not liked"
-        end
+      it "should identify reviews" do
+        @analyzer.analyze("JuJu", "JuJu is my favorite").should be_a_review
+        @analyzer.analyze("JuJu", "JuJu is my favourite").should be_a_review
+        @analyzer.analyze("JuJu", "JuJu is bad").should be_a_review
+        @analyzer.analyze("JuJu", "JuJu is bad").should be_a_review
+        @analyzer.analyze("JuJu", "I hate JuJu").should be_a_review
       end
 
-      it "should identify a bad review" do
-        [
-            q(:term => "JuJu", :msg => "JuJu is bad"),
-            q(:term => "JuJu", :msg => "I hate JuJu")
-        ].each do |q|
-          result = @reviewAnalyzer.analyze q.term, q.msg
-
-          result.review?.should be_true, "not identified as a review"
-          result.liked?.should be_false, "liked"
-        end
+      it "should identify positive reviews" do
+        @analyzer.analyze("JuJu", "JuJu is my favorite").should be_liked
+        @analyzer.analyze("JuJu", "JuJu is my favourite").should be_liked
+        @analyzer.analyze("JuJu", "JuJu is good").should be_liked
       end
-    end
 
-
-    def q props
-      Q.new props
+      it "should identify negative reviews" do
+        @analyzer.analyze("JuJu", "JuJu is bad").should_not be_liked
+        @analyzer.analyze("JuJu", "I hate JuJu").should_not be_liked
+      end
     end
   end
-end
-
-class Q
-  include HasProperties
-  has_properties :term, :msg
 end
