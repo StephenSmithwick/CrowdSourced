@@ -1,7 +1,6 @@
 require_relative '../lib/crowdsourced/term'
 
 describe Term do
-
   before :each do
     @json = {
         "term"=>"ResMed",
