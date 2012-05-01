@@ -1,6 +1,8 @@
-task :default => [:run]
+require 'mongo'
 
-task :run  do
+task :default => [:server]
+
+task :play  do
   ruby "lib/crowdsourced_playground.rb"
 end
 
@@ -10,6 +12,13 @@ end
 
 task :mongod do
   exec "mongod --config conf/mongod.conf"
+end
+
+task :clean do
+  db = Mongo::Connection.new("localhost").db("mydb")
+  db.collection("Suburbs").drop
+  db.collection("Cafes").drop
+  db.collection("Tweets").drop
 end
 
 task :test do
