@@ -18,6 +18,9 @@ puts terms
 
 # Connect to MongoDB
 db = Mongo::Connection.new("localhost").db("mydb")
+db.collection("Suburbs").drop
+db.collection("Cafes").drop
+db.collection("Tweets").drop
 
 # Insert Suburbs
 collSuburbs = db.collection("Suburbs")

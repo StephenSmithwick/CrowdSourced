@@ -1,4 +1,14 @@
-<form action="/currentTweets" method="post">
-  tweet must contain :<input type="text" name="term">
+<form action="/processTweets" method="post">
+  Tweet must contain :<input type="text" name="term">
+  <br/>
+  
+  Suburb:
+  <select name="suburbId">
+  	<% @suburbs.each do |suburb| %>
+      <option value="<%= "#{suburb["id"]}" %>"><%= "#{suburb["name"]}" %></option>
+	<% end %>
+  </select>
+  <br/>
+  
   <input type="submit">
 </form>

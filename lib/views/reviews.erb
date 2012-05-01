@@ -1,0 +1,8 @@
+<table>
+<% @reviews.each do |review| %>
+      <tr>
+      	<td><%= "#{review["liked"]}" %></td>
+      	<td><%= "#{review["text"]}" %></td>
+      </tr>
+<% end %>
+</table>
