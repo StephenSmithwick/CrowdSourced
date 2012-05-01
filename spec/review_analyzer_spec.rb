@@ -1,4 +1,5 @@
 require_relative '../lib/crowdsourced/review/review_analyzer'
+require_relative '../lib/crowdsourced/has_properties'
 require 'rspec'
 
 describe ReviewAnalyzer do
@@ -7,49 +8,47 @@ describe ReviewAnalyzer do
   end
 
   describe '#analyze' do
-    context 'with a non review' do
-      it "should identify it as not a review" do
-        analysis = @reviewAnalyzer.analyze "twitter", "Hello twitter"
+    it "should identify non reviews" do
+      analysis = @reviewAnalyzer.analyze "twitter", "Hello twitter"
 
-        analysis.review?.should be_false
-      end
+      analysis.review?.should be_false
     end
 
     context "with a review" do
-      it "should identify it as a review" do
+      it "should identify a positive review" do
         [
-            ["JuJu", "JuJu is my favorite"],
-            ["JuJu", "JuJu is my favourite"],
-            ["JuJu", "JuJu is good"],
-            ["JuJu", "JuJu is bad"],
-            ["JuJu", "I hate JuJu"]
-        ].each do |item|
-          result = @reviewAnalyzer.analyze item[0], item[1]
-          result.review?.should be_true
+            q(:term => "JuJu", :msg => "JuJu is my favorite"),
+            q(:term => "JuJu", :msg => "JuJu is my favourite"),
+            q(:term => "JuJu", :msg => "JuJu is good")
+        ].each do |q|
+          result = @reviewAnalyzer.analyze q.term, q.msg
+
+          result.review?.should be_true, "not identified as a review"
+          result.liked?.should be_true, "is not liked"
         end
       end
 
-      it "should identify it as a good review" do
+      it "should identify a bad review" do
         [
-            ["JuJu", "JuJu is my favorite"],
-            ["JuJu", "JuJu is my favourite"],
-            ["JuJu", "JuJu is good"],
-        ].each do |item|
-          result = @reviewAnalyzer.analyze item[0], item[1]
-          result.liked?.should be_true
-        end
-      end
+            q(:term => "JuJu", :msg => "JuJu is bad"),
+            q(:term => "JuJu", :msg => "I hate JuJu")
+        ].each do |q|
+          result = @reviewAnalyzer.analyze q.term, q.msg
 
-      it "should identify it as a bad review" do
-        [
-            ["JuJu", "JuJu is bad"],
-            ["JuJu", "I hate JuJu"]
-        ].each do |item|
-          result = @reviewAnalyzer.analyze item[0], item[1]
-          result.liked?.should be_false
+          result.review?.should be_true, "not identified as a review"
+          result.liked?.should be_false, "liked"
         end
       end
     end
 
+
+    def q props
+      Q.new props
+    end
   end
+end
+
+class Q
+  include HasProperties
+  has_properties :term, :msg
 end
