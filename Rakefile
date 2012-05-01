@@ -1,7 +1,7 @@
 task :default => [:run]
 
 task :run  do
-  ruby "lib/crowdsourced.rb"
+  ruby "lib/crowdsourced_playground.rb"
 end
 
 task :test do
