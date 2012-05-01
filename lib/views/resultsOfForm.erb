@@ -1,5 +1,5 @@
-<% @messages.each do |note| %>
+<% @messages.each do |tweet| %>
       <p>
-        <%= "the message is #{note['message']}" %>
+        <%= "the tweet text is #{tweet[:text]}" %>
       </p>
 <% end %>
