@@ -4,7 +4,6 @@ require 'twitter'
 require 'open-uri'
 require 'json'
 require 'rest-client'
-require 'extensions/all'
 
 require_relative 'crowdsourced/term'
 require_relative 'crowdsourced/google_places'
