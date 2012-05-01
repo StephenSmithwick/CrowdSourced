@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'mongo'
+require 'twitter'
 
 class Crowdsourced
 
@@ -20,10 +21,23 @@ class Crowdsourced
     "Hello there, #{params[:name]}."
   end
 
-  get '/form' do
-
-    @title = 'input of form'
+  get '/currentTweetsSelectTerm' do
+    @title = 'this is a form'
     erb :form
+  end
+
+
+  post '/currentTweets' do
+
+    @title = 'list of tweets'
+
+    puts "Getting Tweets for   #{params[:term]}"
+
+    @messages = Array.new unless @messages
+    Twitter.search(params[:term], :rpp => 3, :result_type => "recent", :geocode => "33.865866,151.206256,3km", :lang => "en").map do |tweet|
+      @messages << {:id => "#{tweet.id}" , :text => "#{tweet.text}"}
+    end
+    erb :resultsOfForm
   end
 
   post '/form' do
