@@ -40,7 +40,7 @@ class Crowdsourced
     @messages = @twitterFeed.find_tweets params[:term]
 
     @reviewProcessor = ReviewProcessor.new() unless @reviewProcessor
-    @reviewProcessor.processReviews @messages
+    @reviewProcessor.processReviews @messages, params[:term]
 
 
     erb :resultsOfForm
