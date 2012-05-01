@@ -1,3 +1,4 @@
+
 # Retrieve all suburubs from store
 def retrieve_suburubs(store)
   all_suburbs = Array.new
