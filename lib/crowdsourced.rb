@@ -2,6 +2,8 @@ require 'sinatra'
 require 'mongo'
 require 'twitter'
 
+require_relative 'crowdsourced/twitter_feed'
+
 class Crowdsourced
 
 
@@ -21,24 +23,34 @@ class Crowdsourced
     "Hello there, #{params[:name]}."
   end
 
-  get '/currentTweetsSelectTerm' do
+  get '/processTweetsSelectTerm' do
     @title = 'this is a form'
     erb :form
   end
 
 
-  post '/currentTweets' do
+  post '/processTweets' do
+
+    @twitterFeed = TwitterFeed.new() unless @twitterFeed
 
     @title = 'list of tweets'
 
-    puts "Getting Tweets for   #{params[:term]}"
+    @messages = @twitterFeed.find_tweets params[:term]
 
-    @messages = Array.new unless @messages
-    Twitter.search(params[:term], :rpp => 3, :result_type => "recent", :geocode => "33.865866,151.206256,3km", :lang => "en").map do |tweet|
-      @messages << {:id => "#{tweet.id}" , :text => "#{tweet.text}"}
-    end
+    @reviewProcessor = ReviewProcessor.new() unless @reviewProcessor
+    @reviewProcessor.processReviews @messages
+
+
     erb :resultsOfForm
   end
+
+  get '/getReviews' do
+
+    @reviewsDAO = ReviewsDAO.new() unless @reviewsDAO
+    @reviews = ReviewsDAO.getAll
+    erb :reviews
+  end
+
 
   post '/form' do
 
