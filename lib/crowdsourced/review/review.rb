@@ -3,7 +3,7 @@ class Review
 
   $good_terms = ['good','favorite_n_01','nice_n_01','great_n_01','spectacular_n_01',
                  'love_n_01', 'tasty','wow','awesome','great_n_01','impressed']
-  $bad_terms = ['bad', 'hate']
+  $bad_terms = ['bad', 'hate','average_n_01','pricey']
   $review_terms = $good_terms + $bad_terms
 
   def initialize(subject, review, terms)
@@ -12,7 +12,8 @@ class Review
 
     @terms = terms
     @meanings = terms.map {|term| (term.meaning || term.term).downcase }
-    puts "(#{@review}) => #{@meanings}"
+
+    puts "#{self}"
   end
 
   def review?
@@ -30,6 +31,12 @@ class Review
   end
 
   def to_s
-    "[term=#{@term},review=#{@review}, terms=[#{@terms}]"
+    if review?
+      outcome = liked? ? ":-)" : ":-("
+    else
+      outcome = ":-|"
+    end
+
+    "(#{@review}) => #{@meanings} => #{outcome}"
   end
 end

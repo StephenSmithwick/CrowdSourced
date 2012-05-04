@@ -18,9 +18,21 @@ describe ReviewAnalyzer do
       it "should identify reviews" do
         @do.analyze("JuJu", "JuJu is my favorite").should be_a_review
         @do.analyze("JuJu", "JuJu is my favourite").should be_a_review
-        @do.analyze("JuJu", "JuJu is bad").should be_a_review
+        @do.analyze("JuJu", "JuJu is good").should be_a_review
+        @do.analyze("JuJu", "nice food").should be_a_review
+        @do.analyze("JuJu", "spectacular views,great food,love coming.").should be_a_review
+        @do.analyze("JuJu", "Great food and atmosphere.").should be_a_review
+        @do.analyze("JuJu", "Amazing views and tasty food.").should be_a_review
+        @do.analyze("JuJu", "WOW!").should be_a_review
+        @do.analyze("JuJu", "fantastic coffee great service ill deffinetely be back").should be_a_review
+        @do.analyze("JuJu", "Awesome food & having very fast service").should be_a_review
+        @do.analyze("JuJu", "Great views, well presented, tasty food").should be_a_review
+        @do.analyze("JuJu", "Really impressed with the coffee, jugs of water, pastries and general concept of this place, especially given that it's right in the middle of touristville").should be_a_review
         @do.analyze("JuJu", "JuJu is bad").should be_a_review
         @do.analyze("JuJu", "I hate JuJu").should be_a_review
+        @do.analyze("JuJu", "food is under average").should be_a_review
+        @do.analyze("JuJu", "Food was in the pricey side").should be_a_review
+        @do.analyze("JuJu", "Found it pretentious and impersonal with very average service").should be_a_review
       end
 
       it "should identify positive reviews" do
