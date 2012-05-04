@@ -1,4 +1,3 @@
-
 <img alt="CrowdSourced" src="https://github.com/StephenSmithwick/CrowdSourced/blob/master/assets/logo_with_alpha.png?raw=true" />
 ============
 
@@ -17,8 +16,12 @@ Dev Environment
 
 Setup
 -----
-    $ bundle install
+`$ bundle install`
 
 To Run
 ------
-    $ rake
+1. Start Mongo
+`$ rake mongod`    
+2. Start Web Application
+`$ rake`
+    
