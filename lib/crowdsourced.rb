@@ -9,6 +9,7 @@ require_relative 'crowdsourced/review/review_processor'
 require_relative 'crowdsourced/cafe/cafe_processor'
 require_relative 'crowdsourced/dao/review_dao'
 require_relative 'crowdsourced/dao/suburbs_dao'
+require_relative 'crowdsourced/dao/cafes_dao'
 
 class Crowdsourced
 
@@ -37,7 +38,6 @@ class Crowdsourced
   end
 
   get '/hello/:name' do
-
     @title = 'hello'
     "Hello there, #{params[:name]}."
   end
@@ -47,6 +47,9 @@ class Crowdsourced
     
     @suburbsDao = SuburbsDAO.new() unless @suburbsDao
     @suburbs = @suburbsDao.findAll
+    
+    @cafesDao = CafesDAO.new() unless @cafesDao
+    @cafes = @cafesDao.findBySuburb(@suburbs.next()["id"])
     
     erb :form
   end
@@ -59,7 +62,7 @@ class Crowdsourced
     suburb = @suburbsDao.findById params[:suburbId]
     
     @twitterFeed = TwitterFeed.new() unless @twitterFeed
-    @messages = @twitterFeed.findTweets params[:term], suburb["lat"], suburb["lon"], "3km"
+    @messages = @twitterFeed.findTweets params[:cafeName] + " " + params[:term], suburb["lat"], suburb["lon"], "3km"
 
     @reviewProcessor = ReviewProcessor.new() unless @reviewProcessor
     @reviewProcessor.processReviews @messages, params[:term]
@@ -68,7 +71,6 @@ class Crowdsourced
   end
 
   get '/getReviews' do
-
     @title = 'list of reviews'
 
     @reviewsDAO = ReviewDAO.new() unless @reviewsDAO
@@ -78,7 +80,6 @@ class Crowdsourced
 
 
   post '/form' do
-
     @messages = Array.new unless @messages
     @title = 'result of form'
     db = Mongo::Connection.new.db("mydb")
@@ -87,11 +88,21 @@ class Crowdsourced
     coll.insert(doc)
     search_string = params[:start]
 
-
     coll.find( {:message => /^#{search_string}/}).each {|message|
        @messages << message}
 
     erb :resultsOfForm
+  end
+  
+  get '/cafes/:suburbId' do
+    @cafesDao = CafesDAO.new() unless @cafesDao
+    cafes = @cafesDao.findBySuburb("#{params[:suburbId]}")
+    cafesJson = Array.new
+    cafes.each do |cafe|
+      cafesJson << {"name" => cafe["name"]}
+    end
+    content_type 'application/json'
+    cafesJson.to_json
   end
 
   not_found do

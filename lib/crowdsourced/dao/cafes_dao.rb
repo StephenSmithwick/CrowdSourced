@@ -1,10 +1,11 @@
 require 'mongo'
 
 class CafesDAO
-  def save(name, rating, lat, lon)
+  def save(suburbId, name, rating, lat, lon)
     db = Mongo::Connection.new("localhost").db("mydb")
     collCafes = db.collection("Cafes")
     collCafes.insert({
+              :suburbId => suburbId,
               :name => name,
               :rating => rating, 
               :lat => lat, 
@@ -17,4 +18,10 @@ class CafesDAO
     collCafes = db.collection("Cafes")
     return collCafes.find
   end
+  
+  def findBySuburb(suburbId)
+      db = Mongo::Connection.new("localhost").db("mydb")
+      collCafes = db.collection("Cafes")
+      return collCafes.find(:suburbId => suburbId)
+    end
 end

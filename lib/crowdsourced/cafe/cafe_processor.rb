@@ -7,7 +7,7 @@ class CafeProcessor
     result = open(url) do |file|
       result = JSON.parse(file.read)
       result["results"].each do |location|
-        @cafesDao.save(location["name"], location["rating"].to_s, location["geometry"]["location"]["lat"].to_s, location["geometry"]["location"]["lng"].to_s)
+        @cafesDao.save(suburb["id"], location["name"], location["rating"].to_s, location["geometry"]["location"]["lat"].to_s, location["geometry"]["location"]["lng"].to_s)
       end
     end
   end

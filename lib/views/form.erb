@@ -3,12 +3,35 @@
   <br/>
   
   Suburb:
-  <select name="suburbId">
+  <select id="select-suburb" name="suburbId">
   	<% @suburbs.each do |suburb| %>
       <option value="<%= "#{suburb["id"]}" %>"><%= "#{suburb["name"]}" %></option>
 	<% end %>
   </select>
   <br/>
   
+  Cafe:
+  <select id="select-cafe" name="cafeName">
+  	<% @cafes.each do |cafe| %>
+      <option value="<%= "#{cafe["name"]}" %>"><%= "#{cafe["name"]}" %></option>
+	<% end %>
+  </select>
+  <br/>
+  
   <input type="submit">
 </form>
+
+<script>
+$(document).ready(function() {
+	$("#select-suburb").bind("change", function(event, ui) {
+          $.getJSON("/cafes/" + $("#select-suburb option:selected").val(), function(data){
+		     	var html = '';
+			    var len = data.length;
+			    for (var i = 0; i< len; i++) {
+			        html += '<option value="' + data[i].name + '">' + data[i].name + '</option>';
+			    }
+			    $("#select-cafe").html(html);
+		  })
+    });
+});
+</script>
