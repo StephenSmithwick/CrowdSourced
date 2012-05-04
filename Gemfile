@@ -16,3 +16,6 @@ gem 'twitter'
 # Mongo Db
 gem 'mongo'
 gem 'bson_ext'
+
+#Textual analysis
+gem 'ankusa'
