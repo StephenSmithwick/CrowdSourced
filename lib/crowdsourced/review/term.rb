@@ -1,5 +1,3 @@
-require_relative 'has_properties'
-
 class Term
   attr_accessor :term, :pos, :offset, :meaning, :definition
 

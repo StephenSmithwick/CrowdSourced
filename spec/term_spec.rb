@@ -1,4 +1,4 @@
-require_relative '../lib/crowdsourced/term'
+require_relative '../lib/crowdsourced/review/term'
 require 'rspec'
 
 describe Term do

@@ -1,27 +1,35 @@
 class Review
-  attr_accessor :term, :review
+  attr_accessor :subject, :review
 
-  def initialize(term, review)
-    @term = term
+  $good_terms = ['good','favorite_n_01','nice_n_01','great_n_01','spectacular_n_01',
+                 'love_n_01', 'tasty','wow','awesome','great_n_01','impressed']
+  $bad_terms = ['bad', 'hate']
+  $review_terms = $good_terms + $bad_terms
+
+  def initialize(subject, review, terms)
+    @subject = subject
     @review = review
-    @review_words = @review.split(" ")
+
+    @terms = terms
+    @meanings = terms.map {|term| (term.meaning || term.term).downcase }
+    puts "(#{@review}) => #{@meanings}"
   end
 
   def review?
-    ['good', 'bad', 'favourite', 'favorite', 'hate'].each do |keyword|
-      return true if @review_words.include? keyword
+    $review_terms.each do |term|
+      return true if @meanings.include? term
     end
     return false
   end
 
   def liked?
-    ['good', 'favourite', 'favorite'].each do |keyword|
-      return true if @review_words.include? keyword
+    $good_terms.each do |keyword|
+      return true if @meanings.include? keyword
     end
     return false
   end
 
   def to_s
-    "[term=#{@term},review=#{@review}]"
+    "[term=#{@term},review=#{@review}, terms=[#{@terms}]"
   end
 end
