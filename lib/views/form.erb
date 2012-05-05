@@ -11,9 +11,9 @@
   <br/>
   
   Cafe:
-  <select id="select-cafe" name="cafeName">
+  <select id="select-cafe" name="cafeId">
   	<% @cafes.each do |cafe| %>
-      <option value="<%= "#{cafe["name"]}" %>"><%= "#{cafe["name"]}" %></option>
+      <option value="<%= "#{cafe["_id"]}" %>"><%= "#{cafe["name"]}" %></option>
 	<% end %>
   </select>
   <br/>
@@ -28,7 +28,7 @@ $(document).ready(function() {
 		     	var html = '';
 			    var len = data.length;
 			    for (var i = 0; i< len; i++) {
-			        html += '<option value="' + data[i].name + '">' + data[i].name + '</option>';
+			        html += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
 			    }
 			    $("#select-cafe").html(html);
 		  })

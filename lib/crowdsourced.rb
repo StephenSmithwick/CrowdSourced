@@ -57,14 +57,13 @@ class Crowdsourced
 
   post '/processTweets' do
     @title = 'list of tweets that have been processed'
-    
+
     @suburbsDao = SuburbsDAO.new() unless @suburbsDao
     suburb = @suburbsDao.findById params[:suburbId]
-
-
-    searchterm =  params[:cafeName]
-    searchterm || params[:term]
-
+      
+    @cafesDao = CafesDAO.new() unless @cafesDao
+    cafe = @cafesDao.findById params[:cafeId]
+    searchterm = cafe["name"]
 
     @twitterFeed = TwitterFeed.new() unless @twitterFeed
     @messages = @twitterFeed.findTweets searchterm, suburb["lat"], suburb["lon"], "3km"
@@ -104,7 +103,7 @@ class Crowdsourced
     cafes = @cafesDao.findBySuburb("#{params[:suburbId]}")
     cafesJson = Array.new
     cafes.each do |cafe|
-      cafesJson << {"name" => cafe["name"]}
+      cafesJson << {"id" => cafe["_id"], "name" => cafe["name"]}
     end
     content_type 'application/json'
     cafesJson.to_json
