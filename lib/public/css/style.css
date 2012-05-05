@@ -40,4 +40,14 @@ select option {
 	position: absolute;
 	left: 0;
 	top: 0;
+	background-color: #F0F0F8;
+	border-radius: 8px 8px 8px 8px;
+	box-shadow: 0 2px 4px #999999;
+	margin: 5px;
+	padding: 5px;
+	font-size: 12px;
+}
+
+#reviews .reviews-header {
+	float: right;
 }
