@@ -6,6 +6,7 @@ class ReviewProcessor
     @reviewAnalyzer = ReviewAnalyzer.new() unless @reviewAnalyzer
     
     reviews = messages.map do |message|
+      puts "text to process #{message[:text]}"
       message[:review] = @reviewAnalyzer.analyze(term, message[:text])
     end
     
