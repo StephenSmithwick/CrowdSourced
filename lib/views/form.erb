@@ -24,32 +24,43 @@
 
 <div id="map-canvas" class="map"></div>
 
+<div id="reviews">
+	<div class="reviews-header"><a href="#" onclick="$('#reviews').hide();"><img src="/images/close.png" /></a></div>
+	<div class="clear"></div>
+	<div id="reviews-content"></div>
+</div>
+
 <div class="clear"></div>
 
 <script>
 	$(document).ready(function() {
+		$('#reviews').hide();
 		$("#select-suburb").bind("change", function(event, ui) {
 	          loadSuburb();
 	    });
 	    
-	    $('#map-canvas').gmap().bind('init', function(event, map) { 
+	    $('#map-canvas').gmap({'disableDefaultUI':true}).bind('init', function(event, map) { 
 			loadSuburb();
+			$('#map-canvas').gmap('addControl', 'reviews', google.maps.ControlPosition.TOP_LEFT);
 		});
 	});
 
 	function loadSuburb() {
-        $.getJSON("/places/" + $("#select-suburb option:selected").val()+"/cafe", function(data){
+        $.getJSON("/places/" + $("#select-suburb option:selected").val() + "/cafe", function(data){
 		     	$('#map-canvas').gmap('clear', 'markers');
+		     	$('#map-canvas').gmap('closeInfoWindow');
 		     	var html = '';
 			    var len = data.length;
 			    for (var i = 0; i< len; i++) {
 			        html += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
-			        $('#map-canvas').gmap('addMarker', { 
-						'position': new google.maps.LatLng(data[i].lat, data[i].lon), 'bounds': true 
-					}).click(function() {
-						var infoText = 'Cafe: ' + data[i].name;
-						alert(infoText);
-						$('#map-canvas').gmap('openInfoWindow', { 'content': infoText }, this);
+					$('#map-canvas').gmap('addMarker', {
+							'position':  new google.maps.LatLng(data[i].lat, data[i].lon),
+							'bounds': true,
+							'icon': 'images/markers/cafe.png',
+							'place': data[i]}).click(function() {
+						var infoContent = this.place.name + ' (' + (this.place.rating * 20) + '%)<br/>';
+						infoContent += '<a onclick="loadReviews(\'' + this.place.id + '\');" href="#">Reviews</a>';
+						$('#map-canvas').gmap('openInfoWindow', { 'content': infoContent }, this);
 					});
 			    }
 			    $("#select-cafe").html(html);
@@ -60,5 +71,37 @@
 			$('#map-canvas').gmap('option', 'center', suburbGeoCode);
 			$('#map-canvas').gmap('option', 'zoom', 15);
 		});
+	}
+	
+	function loadReviews(placeId) {
+        $.getJSON("/place/reviews/" + placeId, function(data) {
+		     	var html = '';
+			    var len = data.length;
+			    if (len > 0) {
+				    for (var i = 0; i< len; i++) {
+				    	var imgSrc = '/images/';
+				    	if (data[i].liked) {
+				    		imgSrc += 'thumbs_up_green.gif';
+				    	} else {
+				    		imgSrc += 'thumbs_down_red.gif';
+				    	}
+				    	html += '<img src="' + imgSrc + '" />' ;
+				        html += data[i].text + '<br/>';
+				    }
+			   } else {
+			   		html += '<br/>No reviews available yet<br/>';
+			   }
+			   
+			   html += '<br/><a href="#" onclick="refreshReviews(\'' + placeId + '\');"><img src="/images/refresh.png" /></a>';
+			   
+			   $("#reviews-content").html(html);
+		});
+		$("#reviews").show();
+	}
+	
+	function refreshReviews(placeId) {
+        $.getJSON("/processTweets/" + placeId,  function(data) {
+        	loadReviews(placeId);
+        });
 	}
 </script>

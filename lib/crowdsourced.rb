@@ -125,7 +125,7 @@ class Crowdsourced
     cafes = @placeDao.findBySuburb(params[:suburbId],params[:type])
     cafesJson = Array.new
     cafes.each do |cafe|
-      cafesJson << {"id" => cafe["_id"], "name" => cafe["name"], "lat" => cafe["lat"], "lon" => cafe["lon"], "rating" => cafe["rating"]}
+      cafesJson << {"id" => cafe["_id"].to_s, "name" => cafe["name"], "lat" => cafe["lat"], "lon" => cafe["lon"], "rating" => cafe["rating"]}
     end
     content_type 'application/json'
     cafesJson.to_json
@@ -141,20 +141,19 @@ class Crowdsourced
   end
   
   # Returns a JSON list of reviews for a specified Cafe
-  get '/places/reviews/:placeId' do
-    @placeDao = PlaceDAO.new() unless @placeDao
-    cafe = @placeDao.findById params[:placeId]
-
+  get '/place/reviews/:placeId' do
+    @placeDao = PlaceDao.new() unless @placeDao
+    place = @placeDao.findById params[:placeId]
 
     @reviewDao = ReviewDAO.new() unless @reviewDao
-    reviews = @reviewDao.findReviewsForPlace(cafe)
+    reviews = @reviewDao.findReviewsForPlace(place)
 
-    # GET REVIEWS FROM DB !
-    
     reviewsJson = Array.new
     reviews.each do |review|
+puts review.inspect
       reviewsJson << {"text" => review["text"], "liked" => review["liked"]}
     end
+
     content_type 'application/json'
     reviewsJson.to_json
   end
