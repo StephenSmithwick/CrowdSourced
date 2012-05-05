@@ -40,7 +40,7 @@
 	});
 
 	function loadSuburb() {
-        $.getJSON("/cafes/" + $("#select-suburb option:selected").val(), function(data){
+        $.getJSON("/places/" + $("#select-suburb option:selected").val()+"/cafe", function(data){
 		     	$('#map-canvas').gmap('clear', 'markers');
 		     	$('#map-canvas').gmap('closeInfoWindow');
 		     	var html = '';

@@ -6,10 +6,10 @@ require 'json'
 
 require_relative 'crowdsourced/twitter/twitter_feed'
 require_relative 'crowdsourced/review/review_processor'
-require_relative 'crowdsourced/reviewable/reviewable_processor'
+require_relative 'crowdsourced/place/place_processor'
 require_relative 'crowdsourced/dao/review_dao'
 require_relative 'crowdsourced/dao/suburbs_dao'
-require_relative 'crowdsourced/dao/reviewable_dao'
+require_relative 'crowdsourced/dao/place_dao'
 
 class Crowdsourced
   # Initialize the list of Suburbs and Cafes
@@ -19,10 +19,10 @@ class Crowdsourced
       
       db = Mongo::Connection.new("localhost").db("mydb")
       db.collection("Suburbs").drop
-      db.collection("Reviewable").drop
+      db.collection("Place").drop
       db.collection("Tweets").drop
       
-      @reviewableProcessor = ReviewableProcessor.new() unless @reviewableProcessor
+      @reviewableProcessor = PlaceProcessor.new() unless @reviewableProcessor
       @reviewableProcessor.initializeReviewable
   end
 
@@ -33,27 +33,29 @@ class Crowdsourced
     @suburbsDao = SuburbsDAO.new() unless @suburbsDao
     @suburbs = @suburbsDao.findAll
     
-    @reviewableDao = ReviewableDao.new() unless @reviewableDao
-    @cafes = @reviewableDao.findBySuburb(@suburbs.next()["id"])
+    @placeDao = PlaceDao.new() unless @placeDao
+    @cafes = @placeDao.findBySuburb(@suburbs.next()["id"],"cafe")
     
     erb :form
   end
 
-  post '/processTweets' do
+  get '/processTweets/:placeId' do
     @title = 'list of tweets that have been processed'
 
-    @suburbsDao = SuburbsDAO.new() unless @suburbsDao
-    suburb = @suburbsDao.findById params[:suburbId]
 
-    @reviewableDao = ReviewableDao.new() unless @reviewableDao
-    cafe = @reviewableDao.findById params[:cafeId]
-    searchterm = cafe["name"]
+
+    @placeDao = PlaceDao.new() unless @placeDao
+    place = @placeDao.findById params[:placeId]
+    searchterm = place["name"]
+
+    @suburbsDao = SuburbsDAO.new() unless @suburbsDao
+    suburb = @suburbsDao.findById place["suburbId"]
 
     @twitterFeed = TwitterFeed.new() unless @twitterFeed
     @messages = @twitterFeed.findTweets searchterm, suburb, "3km"
 
     @reviewProcessor = ReviewProcessor.new() unless @reviewProcessor
-    @reviewProcessor.processReviews @messages, searchterm
+    @reviewProcessor.processReviews @messages, searchterm ,place
 
     erb :resultsOfForm
   end
@@ -82,9 +84,9 @@ class Crowdsourced
   end
   
   # Returns a JSON list of Cafes for specified Suburb
-  get '/cafes/:suburbId' do
-    @cafesDao = ReviewableDao.new() unless @cafesDao
-    cafes = @cafesDao.findBySuburb("#{params[:suburbId]}")
+  get '/places/:suburbId/:type' do
+    @placeDao = PlaceDao.new() unless @placeDao
+    cafes = @placeDao.findBySuburb(params[:suburbId],params[:type])
     cafesJson = Array.new
     cafes.each do |cafe|
       cafesJson << {"id" => cafe["_id"], "name" => cafe["name"], "lat" => cafe["lat"], "lon" => cafe["lon"], "rating" => cafe["rating"]}
@@ -103,12 +105,15 @@ class Crowdsourced
   end
   
   # Returns a JSON list of reviews for a specified Cafe
-  get '/cafe/reviews/:cafeId' do
-    @cafesDao = CafesDAO.new() unless @cafesDao
-    cafe = @cafesDao.findById params[:cafeId]
-  
+  get '/places/reviews/:placeId' do
+    @placeDao = PlaceDAO.new() unless @placeDao
+    cafe = @placeDao.findById params[:placeId]
+
+
+    @reviewDao = ReviewDAO.new() unless @reviewDao
+    reviews = @reviewDao.findReviewsForPlace(cafe)
+
     # GET REVIEWS FROM DB !
-    reviews = Array.new
     
     reviewsJson = Array.new
     reviews.each do |review|
