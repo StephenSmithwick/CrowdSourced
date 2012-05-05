@@ -100,7 +100,7 @@ class Crowdsourced
     suburb.to_json
   end
   
-  get '/cafe/revewis/:cafeId' do
+  get '/cafe/reviews/:cafeId' do
     @cafesDao = CafesDAO.new() unless @cafesDao
     cafe = @cafesDao.findById params[:cafeId]
   
