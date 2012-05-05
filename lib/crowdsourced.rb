@@ -12,18 +12,7 @@ require_relative 'crowdsourced/dao/suburbs_dao'
 require_relative 'crowdsourced/dao/cafes_dao'
 
 class Crowdsourced
-
-
-  get '/' do
-    @title = 'root'
-    "Hello, World!"
-  end
-
-  get '/about' do
-    @title = 'about'
-    "A little about me"
-  end
-  
+  # Initialize the list of Suburbs and Cafes
   get '/init' do
       @title = 'Initialize CrowdSourced'
       "Initialize CrowdSourced"
@@ -37,13 +26,9 @@ class Crowdsourced
       @cafeProcessor.initializeCafes
   end
 
-  get '/hello/:name' do
-    @title = 'hello'
-    "Hello there, #{params[:name]}."
-  end
-
-  get '/processTweetsSelectTerm' do
-    @title = 'this is a form to select twitter'
+  # Home page: Displays GMap and the list of cafes
+  get '/' do
+    @title = 'Reviews made by youse'
     
     @suburbsDao = SuburbsDAO.new() unless @suburbsDao
     @suburbs = @suburbsDao.findAll
@@ -53,7 +38,6 @@ class Crowdsourced
     
     erb :form
   end
-
 
   post '/processTweets' do
     @title = 'list of tweets that have been processed'
@@ -82,7 +66,6 @@ class Crowdsourced
     erb :reviews
   end
 
-
   post '/form' do
     @messages = Array.new unless @messages
     @title = 'result of form'
@@ -107,6 +90,29 @@ class Crowdsourced
     end
     content_type 'application/json'
     cafesJson.to_json
+  end
+  
+  get '/suburb/geocode/:suburbId' do
+    @suburbsDao = SuburbsDAO.new() unless @suburbsDao
+    suburb = @suburbsDao.findById params[:suburbId]
+
+    content_type 'application/json'
+    suburb.to_json
+  end
+  
+  get '/cafe/revewis/:cafeId' do
+    @cafesDao = CafesDAO.new() unless @cafesDao
+    cafe = @cafesDao.findById params[:cafeId]
+  
+    # GET REVIEWS FROM DB !
+    reviews = Array.new
+    
+    reviewsJson = Array.new
+    reviews.each do |review|
+      reviewsJson << {"text" => review["text"], "liked" => review["liked"]}
+    end
+    content_type 'application/json'
+    reviewsJson.to_json
   end
 
   not_found do

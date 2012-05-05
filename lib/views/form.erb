@@ -1,37 +1,55 @@
-<form action="/processTweets" method="post">
-  Tweet must contain :<input type="text" name="term">
-  <br/>
-  
-  Suburb:
-  <select id="select-suburb" name="suburbId">
-  	<% @suburbs.each do |suburb| %>
-      <option value="<%= "#{suburb["id"]}" %>"><%= "#{suburb["name"]}" %></option>
-	<% end %>
-  </select>
-  <br/>
-  
-  Cafe:
-  <select id="select-cafe" name="cafeId">
-  	<% @cafes.each do |cafe| %>
-      <option value="<%= "#{cafe["_id"]}" %>"><%= "#{cafe["name"]}" %></option>
-	<% end %>
-  </select>
-  <br/>
-  
-  <input type="submit">
-</form>
+<div class="menu-left">
+	<form action="/processTweets" method="post">
+		<div class="label">Suburb</div>
+		<div class="value">
+			<select id="select-suburb" name="suburbId">
+			  	<% @suburbs.each do |suburb| %>
+			      <option value="<%= "#{suburb["id"]}" %>"><%= "#{suburb["name"]}" %></option>
+				<% end %>
+			</select>
+		</div>
+		<div class="clear"></div>
+		
+		<div class="label">Cafe</div>
+		<div class="value">
+			  <select id="select-cafe" name="cafeId">
+			  	<% @cafes.each do |cafe| %>
+			      <option value="<%= "#{cafe["_id"]}" %>"><%= "#{cafe["name"]}" %></option>
+				<% end %>
+			  </select>
+		</div>
+		<div class="clear"></div>
+	</form>
+</div>
+
+<div id="map-canvas" class="map"></div>
+
+<div class="clear"></div>
 
 <script>
-$(document).ready(function() {
-	$("#select-suburb").bind("change", function(event, ui) {
-          $.getJSON("/cafes/" + $("#select-suburb option:selected").val(), function(data){
-		     	var html = '';
-			    var len = data.length;
-			    for (var i = 0; i< len; i++) {
-			        html += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
-			    }
-			    $("#select-cafe").html(html);
-		  })
-    });
-});
+	$(document).ready(function() {
+		$("#select-suburb").bind("change", function(event, ui) {
+	          loadSuburb();
+	          $.getJSON("/cafes/" + $("#select-suburb option:selected").val(), function(data){
+			     	var html = '';
+				    var len = data.length;
+				    for (var i = 0; i< len; i++) {
+				        html += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
+				    }
+				    $("#select-cafe").html(html);
+			  })
+	    });
+	    
+	    $('#map-canvas').gmap('option', 'zoom', 14);
+	    $('#map-canvas').gmap().bind('init', function(event, map) { 
+			loadSuburb();
+		});
+	});
+
+	function loadSuburb() {
+		$.getJSON("/suburb/geocode/" + $("#select-suburb option:selected").val(), function(suburb){
+			var suburbGeoCode = new google.maps.LatLng(-suburb.lat, suburb.lon);
+			$('#map-canvas').gmap('option', 'center', suburbGeoCode);
+		})
+	}
 </script>

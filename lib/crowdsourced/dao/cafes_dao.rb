@@ -8,8 +8,8 @@ class CafesDAO
     collCafes.insert({
               :suburbId => suburbId,
               :name => name,
-              :rating => rating, 
-              :lat => lat, 
+              :rating => rating,
+              :lat => lat,
               :lon => lon
     });
   end
