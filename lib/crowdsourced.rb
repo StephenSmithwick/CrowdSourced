@@ -81,18 +81,20 @@ class Crowdsourced
     erb :resultsOfForm
   end
   
+  # Returns a JSON list of Cafes for specified Suburb
   get '/cafes/:suburbId' do
     @placeDao = PlaceDao.new() unless @placeDao
     cafes = @placeDao.findBySuburb("#{params[:suburbId]}")
     cafesJson = Array.new
     cafes.each do |cafe|
-      cafesJson << {"id" => cafe["_id"], "name" => cafe["name"]}
+      cafesJson << {"id" => cafe["_id"], "name" => cafe["name"], "lat" => cafe["lat"], "lon" => cafe["lon"], "rating" => cafe["rating"]}
     end
     content_type 'application/json'
     cafesJson.to_json
   end
   
-  get '/suburb/geocode/:suburbId' do
+  # Returns Suburb in JSON form
+  get '/suburb/:suburbId' do
     @suburbsDao = SuburbsDAO.new() unless @suburbsDao
     suburb = @suburbsDao.findById params[:suburbId]
 
@@ -100,6 +102,7 @@ class Crowdsourced
     suburb.to_json
   end
   
+  # Returns a JSON list of reviews for a specified Cafe
   get '/cafe/reviews/:cafeId' do
     @placeDao = PlaceDAO.new() unless @placeDao
     cafe = @placeDao.findById params[:cafeId]
