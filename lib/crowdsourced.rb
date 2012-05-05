@@ -10,6 +10,7 @@ require_relative 'crowdsourced/place/place_processor'
 require_relative 'crowdsourced/dao/review_dao'
 require_relative 'crowdsourced/dao/suburbs_dao'
 require_relative 'crowdsourced/dao/place_dao'
+require_relative 'crowdsourced/place/place'
 
 class Crowdsourced
   # Initialize the list of Suburbs and Cafes
@@ -41,8 +42,6 @@ class Crowdsourced
 
   get '/processTweets/:placeId' do
     @title = 'list of tweets that have been processed'
-
-
 
     @placeDao = PlaceDao.new() unless @placeDao
     place = @placeDao.findById params[:placeId]
@@ -122,13 +121,13 @@ class Crowdsourced
   # Returns a JSON list of Cafes for specified Suburb
   get '/places/:suburbId/:type' do
     @placeDao = PlaceDao.new() unless @placeDao
-    cafes = @placeDao.findBySuburb(params[:suburbId],params[:type])
-    cafesJson = Array.new
-    cafes.each do |cafe|
-      cafesJson << {"id" => cafe["_id"].to_s, "name" => cafe["name"], "lat" => cafe["lat"], "lon" => cafe["lon"], "rating" => cafe["rating"]}
-    end
+    places_hash = @placeDao.findBySuburb(params[:suburbId],params[:type])
+
+    places = Place.init_all places_hash
+
     content_type 'application/json'
-    cafesJson.to_json
+
+    places.to_json
   end
   
   # Returns Suburb in JSON form
@@ -142,11 +141,8 @@ class Crowdsourced
   
   # Returns a JSON list of reviews for a specified Cafe
   get '/place/reviews/:placeId' do
-    @placeDao = PlaceDao.new() unless @placeDao
-    place = @placeDao.findById params[:placeId]
-
     @reviewDao = ReviewDAO.new() unless @reviewDao
-    reviews = @reviewDao.findReviewsForPlace(place)
+    reviews = @reviewDao.findReviewsForPlace(params[:placeId])
 
     reviewsJson = Array.new
     reviews.each do |review|

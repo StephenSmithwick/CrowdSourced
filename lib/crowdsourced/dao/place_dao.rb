@@ -2,14 +2,14 @@ require 'mongo'
 require 'bson'
 
 class PlaceDao
-  def save(suburbId, type , name, rating, lat, lon)
+  def save(suburbId, type , name, google_rating, lat, lon)
     db = Mongo::Connection.new("localhost").db("mydb")
     collPlace = db.collection("Place")
     collPlace.insert({
               :suburbId => suburbId,
               :type => type,
               :name => name,
-              :rating => rating,
+              :google_rating => google_rating,
               :lat => lat,
               :lon => lon
     });
