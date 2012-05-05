@@ -6,10 +6,10 @@ require 'json'
 
 require_relative 'crowdsourced/twitter/twitter_feed'
 require_relative 'crowdsourced/review/review_processor'
-require_relative 'crowdsourced/cafe/cafe_processor'
+require_relative 'crowdsourced/place/place_processor'
 require_relative 'crowdsourced/dao/review_dao'
 require_relative 'crowdsourced/dao/suburbs_dao'
-require_relative 'crowdsourced/dao/cafes_dao'
+require_relative 'crowdsourced/dao/place_dao'
 
 class Crowdsourced
   # Initialize the list of Suburbs and Cafes
@@ -19,11 +19,11 @@ class Crowdsourced
       
       db = Mongo::Connection.new("localhost").db("mydb")
       db.collection("Suburbs").drop
-      db.collection("Cafes").drop
+      db.collection("Place").drop
       db.collection("Tweets").drop
       
-      @cafeProcessor = CafeProcessor.new() unless @cafeProcessor
-      @cafeProcessor.initializeCafes
+      @reviewableProcessor = PlaceProcessor.new() unless @reviewableProcessor
+      @reviewableProcessor.initializeReviewable
   end
 
   # Home page: Displays GMap and the list of cafes
@@ -33,8 +33,8 @@ class Crowdsourced
     @suburbsDao = SuburbsDAO.new() unless @suburbsDao
     @suburbs = @suburbsDao.findAll
     
-    @cafesDao = CafesDAO.new() unless @cafesDao
-    @cafes = @cafesDao.findBySuburb(@suburbs.next()["id"])
+    @placeDao = PlaceDao.new() unless @placeDao
+    @cafes = @placeDao.findBySuburb(@suburbs.next()["id"])
     
     erb :form
   end
@@ -44,9 +44,9 @@ class Crowdsourced
 
     @suburbsDao = SuburbsDAO.new() unless @suburbsDao
     suburb = @suburbsDao.findById params[:suburbId]
-      
-    @cafesDao = CafesDAO.new() unless @cafesDao
-    cafe = @cafesDao.findById params[:cafeId]
+
+    @placeDao = PlaceDao.new() unless @placeDao
+    cafe = @placeDao.findById params[:cafeId]
     searchterm = cafe["name"]
 
     @twitterFeed = TwitterFeed.new() unless @twitterFeed
@@ -81,18 +81,20 @@ class Crowdsourced
     erb :resultsOfForm
   end
   
+  # Returns a JSON list of Cafes for specified Suburb
   get '/cafes/:suburbId' do
-    @cafesDao = CafesDAO.new() unless @cafesDao
-    cafes = @cafesDao.findBySuburb("#{params[:suburbId]}")
+    @placeDao = PlaceDao.new() unless @placeDao
+    cafes = @placeDao.findBySuburb("#{params[:suburbId]}")
     cafesJson = Array.new
     cafes.each do |cafe|
-      cafesJson << {"id" => cafe["_id"], "name" => cafe["name"]}
+      cafesJson << {"id" => cafe["_id"], "name" => cafe["name"], "lat" => cafe["lat"], "lon" => cafe["lon"], "rating" => cafe["rating"]}
     end
     content_type 'application/json'
     cafesJson.to_json
   end
   
-  get '/suburb/geocode/:suburbId' do
+  # Returns Suburb in JSON form
+  get '/suburb/:suburbId' do
     @suburbsDao = SuburbsDAO.new() unless @suburbsDao
     suburb = @suburbsDao.findById params[:suburbId]
 
@@ -100,9 +102,10 @@ class Crowdsourced
     suburb.to_json
   end
   
+  # Returns a JSON list of reviews for a specified Cafe
   get '/cafe/reviews/:cafeId' do
-    @cafesDao = CafesDAO.new() unless @cafesDao
-    cafe = @cafesDao.findById params[:cafeId]
+    @placeDao = PlaceDAO.new() unless @placeDao
+    cafe = @placeDao.findById params[:cafeId]
   
     # GET REVIEWS FROM DB !
     reviews = Array.new

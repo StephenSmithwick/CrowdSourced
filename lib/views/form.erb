@@ -30,26 +30,35 @@
 	$(document).ready(function() {
 		$("#select-suburb").bind("change", function(event, ui) {
 	          loadSuburb();
-	          $.getJSON("/cafes/" + $("#select-suburb option:selected").val(), function(data){
-			     	var html = '';
-				    var len = data.length;
-				    for (var i = 0; i< len; i++) {
-				        html += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
-				    }
-				    $("#select-cafe").html(html);
-			  })
 	    });
 	    
-	    $('#map-canvas').gmap('option', 'zoom', 14);
 	    $('#map-canvas').gmap().bind('init', function(event, map) { 
 			loadSuburb();
 		});
 	});
 
 	function loadSuburb() {
-		$.getJSON("/suburb/geocode/" + $("#select-suburb option:selected").val(), function(suburb){
+        $.getJSON("/cafes/" + $("#select-suburb option:selected").val(), function(data){
+		     	$('#map-canvas').gmap('clear', 'markers');
+		     	var html = '';
+			    var len = data.length;
+			    for (var i = 0; i< len; i++) {
+			        html += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
+			        $('#map-canvas').gmap('addMarker', { 
+						'position': new google.maps.LatLng(data[i].lat, data[i].lon), 'bounds': true 
+					}).click(function() {
+						var infoText = 'Cafe: ' + data[i].name;
+						alert(infoText);
+						$('#map-canvas').gmap('openInfoWindow', { 'content': infoText }, this);
+					});
+			    }
+			    $("#select-cafe").html(html);
+		});
+		
+		$.getJSON("/suburb/" + $("#select-suburb option:selected").val(), function(suburb){
 			var suburbGeoCode = new google.maps.LatLng(-suburb.lat, suburb.lon);
 			$('#map-canvas').gmap('option', 'center', suburbGeoCode);
-		})
+			$('#map-canvas').gmap('option', 'zoom', 15);
+		});
 	}
 </script>
