@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require_relative '../lib/crowdsourced/review/review_analyzer'
 require_relative '../lib/crowdsourced/has_properties'
 require 'rspec'
@@ -34,6 +36,16 @@ EOF
 
     context "with a review" do
       it "should identify positive reviews" do
+        analyze("Cafe Sydney", "Thanks to Billicorp - lovely lunch at Cafe Sydney. Thank you to Kristen Marsh & Fallon Leek of Billicorp the property agents in Alexandria!").should be_liked
+        analyze("Cafe Sydney", "Hot chocolate after a crazy speed boat ride! Perfect! (@ Café Sydney w/ 7 others) [pic]: http://t.co/URb2LYES").should be_liked
+        analyze("Cafe Sydney", "My amazing entree at cafe Sydney. Taste way better than it looks. http://t.co/cV3D1kcY").should be_liked
+        analyze("Guylian Belgian Chocolate Cafe", "Amber is in heaven @ Guylian Belgian Chocolate Café http://t.co/2TBscyVp").should be_liked
+        analyze("Starbucks Coffee", "I love the Barnes & Noble atmosphere. Starbucks coffee & a good book. Yup, that's my Friday night... ").should be_liked
+        analyze("Max Brenner", "Max brenner! Amazing!").should be_liked
+        analyze("Max Brenner", "@lisalovesbacon @x_michelle mmmm Max Brenner. except having the exploding shot and a hot chocolate was too much chocolate for me ><").should be_liked
+        analyze("Max Brenner", "Max brenner chocolate is best chocolate").should be_liked
+        analyze("Max Brenner", "Max brenner's was POPPIN' #satisified @Patriz").should be_liked
+        analyze("Max Brenner", "Max Brenner you have done it again #chocolate #fatty #yummmmm http://t.co/LUKcjtYv").should be_liked
         analyze("GG Espresso", "RT @TheLocalBar1: A bracing cup of coffee to recover from driving in the Sydney traffic @ GG espresso 56 Pitt Street. Goodness....").should be_liked
         analyze("GG Espresso", "Delicious lunch @ GG espresso Fairfax Media today. Thanks to the team.").should be_liked
         analyze("GG Espresso", "Coffee this morning at GG espresso @ 55 Hunter Street. Sourdough toast with jam, newspaper and some sunshine. Good start to Wednesday.").should be_liked
@@ -41,7 +53,6 @@ EOF
         analyze("MOS Cafe", "MOS Cafe's banana chocolate waffle and hot choco nom nom :9 http://t.co/yYgjW5GV").should be_liked
         analyze("MOS Cafe", "Hmm...finally my fave one, rice burger (@ MOS Cafe) http://t.co/GuiKiOtJ").should be_liked
         analyze("MOS Cafe", "Highly recommended, Green Tea Jelly by Mos Cafe PS").should be_liked
-        analyze("MOS Cafe", "Breakfast :) (Checked in at Mo's Cafe) http://t.co/aYHYydg6").should be_liked
         analyze("JuJu", "JuJu is my favorite").should be_liked
         analyze("JuJu", "JuJu is my favourite").should be_liked
         analyze("JuJu", "JuJu is good").should be_liked
@@ -49,7 +60,6 @@ EOF
         analyze("JuJu", "spectacular views,great food,love coming.").should be_liked
         analyze("JuJu", "Great food and atmosphere.").should be_liked
         analyze("JuJu", "Amazing views and tasty food.").should be_liked
-        analyze("JuJu", "WOW!").should be_liked
         analyze("JuJu", "fantastic coffee great service ill deffinetely be back").should be_liked
         analyze("JuJu", "Awesome food & having very fast service").should be_liked
         analyze("JuJu", "Great views, well presented, tasty food").should be_liked

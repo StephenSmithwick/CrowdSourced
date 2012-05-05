@@ -8,11 +8,18 @@ class ReviewAnalyzer
   def self.good_terms
     ['good', 'favorite_n_01', 'nice_n_01', 'great_n_01', 'spectacular_n_01',
      'love_n_01', 'tasty', 'awesome', 'impressed', 'good_n_02',
-     'delicious', 'ideal_n_01', 'recommended']
+     'delicious', 'ideal_n_01', 'recommended', 'lovely', 'perfect', 'amazing',
+     'eden_n_01', 'love', 'amazing', 'best_n_03', 'satisfied']
   end
 
   def self.good_slang
-    [':)', ':-)', 'fave', 'nom', 'wow']
+    @good_slang = @good_slang || [
+        'fave', 'nom', 'mmm+', 'yum+', 'satisified'
+    ].map { |regexp| Regexp.new "^#{regexp}$" }
+  end
+
+  def self.good_slang? token
+    good_slang.select { |slang| slang === token }.count > 0
   end
 
   def self.bad_terms
@@ -47,16 +54,16 @@ class ReviewAnalyzer
   def clean keyword, message
     key_word = keyword.gsub(' ', '_')
     with_keyword_tokenised = message.gsub(keyword, key_word)
-    tokens = with_keyword_tokenised.split(/[\s.?!]+/)
+    tokens = with_keyword_tokenised.split(/[\n\s(),.?!@:|%#]+/)
     tokens_without_slang = tokens.map do |token|
-      if ReviewAnalyzer.good_slang.include? token
+      if ReviewAnalyzer.good_slang? token
         "good"
       else
         token
       end
     end
 
-    tokens_without_slang.join(" ").gsub(/[().@!:?,\n|%]/, ' ').gsub(/\s+/, " ")
+    tokens_without_slang.join(" ").gsub(/\s+/, " ")
   end
 
   def disambiguate text
