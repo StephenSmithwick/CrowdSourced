@@ -1,6 +1,7 @@
 require_relative '../dao/suburbs_dao'
 require_relative '../dao/place_dao'
 
+
 class PlaceProcessor
   def fetchCafesForSuburb(suburb)
     url = "https://maps.googleapis.com/maps/api/place/search/json?location=-" + suburb["lat"] + "," + suburb["lon"]  + "&radius=" + suburb["radius"]  + "&types=cafe&sensor=false&key=AIzaSyC2pDpNpBWnlNYnBUX363XV5Aog4UdOjeg"

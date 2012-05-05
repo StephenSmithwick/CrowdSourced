@@ -1,5 +1,9 @@
 require_relative 'review_analyzer'
 require_relative '../dao/review_dao'
+require_relative '../dao/place_dao'
+require_relative '../dao/suburbs_dao'
+require_relative '../twitter/twitter_feed'
+
 
 class ReviewProcessor
   def processReviews(messages, term, place)
@@ -12,6 +16,7 @@ class ReviewProcessor
     
     
     @reviewDao = ReviewDAO.new() unless @reviewDao
-    @reviewDao.saveAll term, messages, place
+    @reviewDao.saveAll term,messages ,place
+    messages
   end
 end

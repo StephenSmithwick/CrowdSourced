@@ -60,6 +60,42 @@ class Crowdsourced
     erb :resultsOfForm
   end
 
+
+  get '/processAllTweetsInSuburb/:suburbName/forPlace/:placeName' do
+    @title = 'process tweets by suburb and name'
+
+
+    @placeDao = PlaceDao.new() unless @placeDao
+    place = @placeDao.findByName params[:placeName]
+
+    @suburbsDao = SuburbsDAO.new() unless @suburbsDao
+    suburb = @suburbsDao.findByName(params[:suburbName])
+
+    @reviewProcessor = ReviewProcessor.new() unless @reviewProcessor
+    @messages = @reviewProcessor.processAllReviewsForPlace place,suburb
+
+    erb :resultsOfForm
+  end
+
+  get '/processAllTweetsInSuburb/:suburbName' do
+    @title = 'process tweets by suburb'
+
+    @reviewProcessor = ReviewProcessor.new() unless @reviewProcessor
+    @suburbsDao = SuburbsDAO.new() unless @suburbsDao
+    @messages = @reviewProcessor.processAllReviewsForSuburb  @suburbsDao.findByName(params[:suburbName])
+
+    erb :resultsOfForm
+  end
+
+  get '/processAllTweets' do
+    @title = 'list of tweets that have been processed'
+
+    @reviewProcessor = ReviewProcessor.new() unless @reviewProcessor
+    @messages = @reviewProcessor.processAllReviews()
+
+    erb :resultsOfForm
+  end
+
   get '/getReviews' do
     @title = 'list of reviews'
 
