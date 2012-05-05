@@ -30,3 +30,14 @@ div.value {
 select option {
 	min-width: 220px;
 }
+
+#map-canvas div {
+	font-family: arial, sans-serif;
+	font-size: 14px;
+}
+
+#reviews {
+	position: absolute;
+	left: 0;
+	top: 0;
+}
