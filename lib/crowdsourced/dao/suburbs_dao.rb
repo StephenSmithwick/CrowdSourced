@@ -24,4 +24,10 @@ class SuburbsDAO
     collSuburbs = db.collection("Suburbs")
     return collSuburbs.find_one(:id => id)
   end
+
+  def findByName(name)
+    db = Mongo::Connection.new("localhost").db("mydb")
+    collSuburbs = db.collection("Suburbs")
+    return collSuburbs.find_one(:name => name)
+  end
 end
