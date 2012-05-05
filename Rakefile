@@ -67,7 +67,7 @@ task :help do
   puts "Experimental Commands:"
   puts "  clean_db[:db_name] - drops a database of :db_name - useful when cleaning up after training"
   puts "  classify[:db_name] text=\":text\" - tries to classify a string of text given the training data setup in :db_name"
-  puts "  train[:db_name,tag] path=\":path\" - trains the text analyzer pesristing to :db_name for the tag"
-  puts "    :path = file      => treats all lines as a new dataset"
-  puts "    :path = directory => treats all files as a new dataset"
+  puts "  train[:db_name,:tag] path=\":path\" - trains the text analyzer pesristing to :db_name for the :tag"
+  puts "    if :path is a file      => treats all lines as a new dataset"
+  puts "    if :path is a directory => treats all files as a new dataset"
 end
