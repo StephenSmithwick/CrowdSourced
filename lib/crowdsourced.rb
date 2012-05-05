@@ -34,26 +34,28 @@ class Crowdsourced
     @suburbs = @suburbsDao.findAll
     
     @placeDao = PlaceDao.new() unless @placeDao
-    @cafes = @placeDao.findBySuburb(@suburbs.next()["id"])
+    @cafes = @placeDao.findBySuburb(@suburbs.next()["id"],"cafe")
     
     erb :form
   end
 
-  post '/processTweets' do
+  get '/processTweets/:placeId' do
     @title = 'list of tweets that have been processed'
 
-    @suburbsDao = SuburbsDAO.new() unless @suburbsDao
-    suburb = @suburbsDao.findById params[:suburbId]
+
 
     @placeDao = PlaceDao.new() unless @placeDao
-    cafe = @placeDao.findById params[:cafeId]
-    searchterm = cafe["name"]
+    place = @placeDao.findById params[:placeId]
+    searchterm = place["name"]
+
+    @suburbsDao = SuburbsDAO.new() unless @suburbsDao
+    suburb = @suburbsDao.findById place["suburbId"]
 
     @twitterFeed = TwitterFeed.new() unless @twitterFeed
     @messages = @twitterFeed.findTweets searchterm, suburb, "3km"
 
     @reviewProcessor = ReviewProcessor.new() unless @reviewProcessor
-    @reviewProcessor.processReviews @messages, searchterm
+    @reviewProcessor.processReviews @messages, searchterm ,place
 
     erb :resultsOfForm
   end
@@ -82,9 +84,9 @@ class Crowdsourced
   end
   
   # Returns a JSON list of Cafes for specified Suburb
-  get '/cafes/:suburbId' do
+  get '/places/:suburbId/:type' do
     @placeDao = PlaceDao.new() unless @placeDao
-    cafes = @placeDao.findBySuburb("#{params[:suburbId]}")
+    cafes = @placeDao.findBySuburb(params[:suburbId],params[:type])
     cafesJson = Array.new
     cafes.each do |cafe|
       cafesJson << {"id" => cafe["_id"], "name" => cafe["name"], "lat" => cafe["lat"], "lon" => cafe["lon"], "rating" => cafe["rating"]}
@@ -103,12 +105,15 @@ class Crowdsourced
   end
   
   # Returns a JSON list of reviews for a specified Cafe
-  get '/cafe/reviews/:cafeId' do
+  get '/places/reviews/:placeId' do
     @placeDao = PlaceDAO.new() unless @placeDao
-    cafe = @placeDao.findById params[:cafeId]
-  
+    cafe = @placeDao.findById params[:placeId]
+
+
+    @reviewDao = ReviewDAO.new() unless @reviewDao
+    reviews = @reviewDao.findReviewsForPlace(cafe)
+
     # GET REVIEWS FROM DB !
-    reviews = Array.new
     
     reviewsJson = Array.new
     reviews.each do |review|

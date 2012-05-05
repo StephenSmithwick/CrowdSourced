@@ -2,7 +2,7 @@ require_relative 'review_analyzer'
 require_relative '../dao/review_dao'
 
 class ReviewProcessor
-  def processReviews(messages, term)
+  def processReviews(messages, term,place)
     @reviewAnalyzer = ReviewAnalyzer.new() unless @reviewAnalyzer
     
     reviews = messages.map do |message|
@@ -12,6 +12,6 @@ class ReviewProcessor
     
     
     @reviewDao = ReviewDAO.new() unless @reviewDao
-    @reviewDao.saveAll term,messages
+    @reviewDao.saveAll term,messages ,place
   end
 end

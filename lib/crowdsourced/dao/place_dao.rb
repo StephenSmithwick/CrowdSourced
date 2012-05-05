@@ -21,10 +21,10 @@ class PlaceDao
     return collReviewable.find
   end
   
-  def findBySuburb(suburbId)
+  def findBySuburb(suburbId,type)
       db = Mongo::Connection.new("localhost").db("mydb")
       collPlace = db.collection("Place")
-      return collPlace.find(:suburbId => suburbId)
+      return collPlace.find(:suburbId => suburbId , :type => type)
   end
   
   def findById(id)
