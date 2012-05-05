@@ -1,0 +1,32 @@
+div.clear {
+	clear: both;;
+}
+
+div.menu-left {
+	float: left;
+	min-height: 350px;
+}
+
+div.map {
+	margin-left: 20px;
+	float: left;
+	width: 800px;
+	height: 600px;
+	float: left;
+}
+
+div.label {
+	float: left;
+	min-width: 120px;
+	margin-top: 4px;
+}
+
+div.value {
+	float: left;
+	min-width: 180px;
+	margin-top: 4px;
+}
+
+select option {
+	min-width: 220px;
+}

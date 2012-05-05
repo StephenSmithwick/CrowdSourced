@@ -9,8 +9,8 @@ class ReviewableDao
               :suburbId => suburbId,
               :type => type,
               :name => name,
-              :rating => rating, 
-              :lat => lat, 
+              :rating => rating,
+              :lat => lat,
               :lon => lon
     });
   end

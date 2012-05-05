@@ -16,3 +16,11 @@ class Term
     "[term: #{@term}, pos: #{@pos}, offset:#{@offset}, meaning: #{@meaning}, definition: #{@definition}]"
   end
 end
+
+class FakeTerm < Term
+  def initialize word
+    @term = word
+    @meaning = word
+    @definition = word
+  end
+end
