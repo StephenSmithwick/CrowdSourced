@@ -60,12 +60,17 @@ class Crowdsourced
     
     @suburbsDao = SuburbsDAO.new() unless @suburbsDao
     suburb = @suburbsDao.findById params[:suburbId]
-    
+
+
+    searchterm =  params[:cafeName]
+    searchterm || params[:term]
+
+
     @twitterFeed = TwitterFeed.new() unless @twitterFeed
-    @messages = @twitterFeed.findTweets params[:cafeName] + " " + params[:term], suburb["lat"], suburb["lon"], "3km"
+    @messages = @twitterFeed.findTweets searchterm, suburb["lat"], suburb["lon"], "3km"
 
     @reviewProcessor = ReviewProcessor.new() unless @reviewProcessor
-    @reviewProcessor.processReviews @messages, params[:term]
+    @reviewProcessor.processReviews @messages, searchterm
 
     erb :resultsOfForm
   end

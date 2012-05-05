@@ -6,11 +6,11 @@ class ReviewProcessor
     @reviewAnalyzer = ReviewAnalyzer.new() unless @reviewAnalyzer
     
     reviews = messages.map do |message|
-      @reviewAnalyzer.analyze term, message[:text]
+      message[:review] = @reviewAnalyzer.analyze(term, message[:text])
     end
     
     
     @reviewDao = ReviewDAO.new() unless @reviewDao
-    @reviewDao.saveAll reviews.select {|review| review.review? }
+    @reviewDao.saveAll term,messages
   end
 end

@@ -1,11 +1,15 @@
 require 'mongo'
 
 class ReviewDAO
-  def saveAll reviews
+  def saveAll term,messages
     db = Mongo::Connection.new("localhost").db("mydb")
     collTweets = db.collection("Tweets")
-    reviews.each do |review|
-      collTweets.insert({:text => review.review, :liked => review.liked?});
+    messages.each do |message|
+      collTweets.insert({:text => message[:text],
+                         :liked => message[:review].liked?,
+                         :term => term,
+                         :review => message[:review].review?
+                        });
     end
   end
 
