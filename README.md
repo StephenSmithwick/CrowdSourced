@@ -24,4 +24,8 @@ To Run
 `$ rake mongod`    
 2. Start Web Application
 `$ rake`
+
+For Rake command Help
+________
+`$ rake help`
     
