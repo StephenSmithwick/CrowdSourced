@@ -3,8 +3,12 @@ div.clear {
 }
 
 div.menu-left {
+	background-color: #F0F0F4;
+	border: 1px solid #333333;
+	border-radius: 8px 8px 8px 8px;
 	float: left;
 	min-height: 350px;
+	padding: 5px;
 }
 
 div.map {
