@@ -25,7 +25,10 @@
 <div id="map-canvas" class="map"></div>
 
 <div id="reviews">
-	<div class="reviews-header"><a href="#" onclick="$('#reviews').hide();"><img src="/images/close.png" /></a></div>
+	<div class="reviews-header">
+		<span id="review-header-text"></span>
+		<a class="review-close" href="#" onclick="$('#reviews').hide();"><img src="/images/close.png" /></a>
+	</div>
 	<div class="clear"></div>
 	<div id="reviews-content"></div>
 </div>
@@ -60,7 +63,7 @@
 							'place': data[i]}).click(function() {
 								$("#reviews").hide();
 								var infoContent = this.place.name + ' (' + (this.place.rating * 20) + '%)<br/>';
-								infoContent += '<a onclick="loadReviews(\'' + this.place.id + '\');" href="#">Reviews</a>';
+								infoContent += '<a onclick="loadReviews(\'' + this.place.id + '\', \'' + this.place.name + '\');" href="#">Reviews</a>';
 								$('#map-canvas').gmap('openInfoWindow', { 'content': infoContent }, this);
 							});
 			    }
@@ -74,7 +77,7 @@
 		});
 	}
 	
-	function loadReviews(placeId) {
+	function loadReviews(placeId, placeName) {
         $.getJSON("/place/reviews/" + placeId, function(data) {
 		     	var html = '';
 			    var len = data.length;
@@ -93,8 +96,9 @@
 			   		html += '<br/>No reviews available yet<br/>';
 			   }
 			   
-			   html += '<br/><a href="#" onclick="refreshReviews(\'' + placeId + '\');"><img src="/images/refresh.png" /></a>';
+			   html += '<br/><a href="#" onclick="refreshReviews(\'' + placeId + '\', \'' + placeName + '\');"><img src="/images/refresh.png" /></a>';
 			   
+			   $("#review-header-text").html('Reviews for ' + placeName);
 			   $("#reviews-content").html(html);
 		});
 		$("#reviews").show();
