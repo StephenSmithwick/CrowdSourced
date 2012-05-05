@@ -1,7 +1,7 @@
 require 'mongo'
 require 'bson'
 
-class ReviewableDao
+class PlaceDao
   def save(suburbId, type , name, rating, lat, lon)
     db = Mongo::Connection.new("localhost").db("mydb")
     collReviewable = db.collection("Reviewable")

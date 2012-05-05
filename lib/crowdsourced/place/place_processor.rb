@@ -1,7 +1,7 @@
 require_relative '../dao/suburbs_dao'
 require_relative '../dao/reviewable_dao'
 
-class ReviewableProcessor
+class PlaceProcessor
   def fetchCafesForSuburb(suburb)
     url = "https://maps.googleapis.com/maps/api/place/search/json?location=-" + suburb["lat"] + "," + suburb["lon"]  + "&radius=" + suburb["radius"]  + "&types=cafe&sensor=false&key=AIzaSyC2pDpNpBWnlNYnBUX363XV5Aog4UdOjeg"
     result = open(url) do |file|
@@ -14,7 +14,7 @@ class ReviewableProcessor
   
   def initializeReviewable
     @suburbsDao = SuburbsDAO.new() unless @suburbsDao
-    @reviewableDao = ReviewableDao.new() unless @reviewableDao
+    @reviewableDao = PlaceDao.new() unless @reviewableDao
     
     suburbs = @suburbsDao.initializeSuburbs
     suburbs.each do |suburb|
