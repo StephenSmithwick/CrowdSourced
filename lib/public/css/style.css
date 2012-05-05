@@ -45,9 +45,21 @@ select option {
 	box-shadow: 0 2px 4px #999999;
 	margin: 5px;
 	padding: 5px;
-	font-size: 12px;
+	min-width: 95%;
 }
 
-#reviews .reviews-header {
+#reviews .reviews-header #review-header-text {
+	font-weight: bold;
+}
+
+#reviews .reviews-header .review-close {
 	float: right;
+}
+
+#reviews #reviews-content {
+	width: 100%;
+	max-height: 400px;
+	overflow: scroll;
+	font-size: 11px;
+	max-height: 400px;
 }
