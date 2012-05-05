@@ -23,9 +23,9 @@ class ReviewDAO
     return collTweets.find
   end
 
-  def saved? id
+  def saved?(id,term)
     db = Mongo::Connection.new("localhost").db("mydb")
     collTweets = db.collection("Tweets")
-    collTweets.find_one(_id:"#{id}")
+    collTweets.find_one( {_id:"#{id}" , term:term})
   end
 end

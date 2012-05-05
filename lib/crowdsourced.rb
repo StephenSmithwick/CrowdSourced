@@ -6,10 +6,10 @@ require 'json'
 
 require_relative 'crowdsourced/twitter/twitter_feed'
 require_relative 'crowdsourced/review/review_processor'
-require_relative 'crowdsourced/cafe/cafe_processor'
+require_relative 'crowdsourced/reviewable/reviewable_processor'
 require_relative 'crowdsourced/dao/review_dao'
 require_relative 'crowdsourced/dao/suburbs_dao'
-require_relative 'crowdsourced/dao/cafes_dao'
+require_relative 'crowdsourced/dao/reviewable_dao'
 
 class Crowdsourced
 
@@ -30,11 +30,11 @@ class Crowdsourced
       
       db = Mongo::Connection.new("localhost").db("mydb")
       db.collection("Suburbs").drop
-      db.collection("Cafes").drop
+      db.collection("Reviewable").drop
       db.collection("Tweets").drop
       
-      @cafeProcessor = CafeProcessor.new() unless @cafeProcessor
-      @cafeProcessor.initializeCafes
+      @reviewableProcessor = ReviewableProcessor.new() unless @reviewableProcessor
+      @reviewableProcessor.initializeReviewable
   end
 
   get '/hello/:name' do
@@ -48,8 +48,8 @@ class Crowdsourced
     @suburbsDao = SuburbsDAO.new() unless @suburbsDao
     @suburbs = @suburbsDao.findAll
     
-    @cafesDao = CafesDAO.new() unless @cafesDao
-    @cafes = @cafesDao.findBySuburb(@suburbs.next()["id"])
+    @reviewableDao = ReviewableDao.new() unless @reviewableDao
+    @cafes = @reviewableDao.findBySuburb(@suburbs.next()["id"])
     
     erb :form
   end
@@ -60,9 +60,9 @@ class Crowdsourced
 
     @suburbsDao = SuburbsDAO.new() unless @suburbsDao
     suburb = @suburbsDao.findById params[:suburbId]
-      
-    @cafesDao = CafesDAO.new() unless @cafesDao
-    cafe = @cafesDao.findById params[:cafeId]
+
+    @reviewableDao = ReviewableDao.new() unless @reviewableDao
+    cafe = @reviewableDao.findById params[:cafeId]
     searchterm = cafe["name"]
 
     @twitterFeed = TwitterFeed.new() unless @twitterFeed
@@ -99,7 +99,7 @@ class Crowdsourced
   end
   
   get '/cafes/:suburbId' do
-    @cafesDao = CafesDAO.new() unless @cafesDao
+    @cafesDao = ReviewableDao.new() unless @cafesDao
     cafes = @cafesDao.findBySuburb("#{params[:suburbId]}")
     cafesJson = Array.new
     cafes.each do |cafe|
