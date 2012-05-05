@@ -11,7 +11,7 @@ class ReviewDAO
                          :liked => message[:review].liked?,
                          :term => term,
                          :review => message[:review].review? ,
-                         :suburb => message[:suburb]["id"]   ,
+                         :suburb => message[:suburb]["_id"].to_s   ,
                          :_id => message[:id]   ,
                          :place => place["_id"].to_s
                         })
@@ -27,7 +27,13 @@ class ReviewDAO
   def findReviewsForPlace place
     db = Mongo::Connection.new("localhost").db("mydb")
     collTweets = db.collection("Tweets")
-    return collTweets.find(:place => place["_id"].to_s)
+    return collTweets.find(:place => place["_id"].to_s , :review => true)
+  end
+
+  def findReviewsForSuburb suburb
+    db = Mongo::Connection.new("localhost").db("mydb")
+    collTweets = db.collection("Tweets")
+    return collTweets.find(:suburb => suburb["_id"].to_s , :review => true)
   end
 
   def saved? (id, term)

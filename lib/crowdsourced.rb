@@ -104,6 +104,33 @@ class Crowdsourced
     erb :reviews
   end
 
+  get '/getReviews/place/:placeName' do
+    @title = 'list of reviews'
+
+
+    @placeDao = PlaceDao.new() unless @placeDao
+    place = @placeDao.findByName params[:placeName]
+
+    @reviewDao = ReviewDAO.new() unless @reviewDao
+    @reviews = @reviewDao.findReviewsForPlace(place)
+    erb :reviews
+  end
+
+  get '/getReviews/suburb/:suburbName' do
+    @title = 'list of reviews'
+
+
+    @suburbsDao = SuburbsDAO.new() unless @suburbsDao
+    suburb = @suburbsDao.findByName params[:suburbName]
+
+    @reviewDao = ReviewDAO.new() unless @reviewDao
+    @reviews = @reviewDao.findReviewsForSuburb(suburb)
+    erb :reviews
+  end
+
+
+
+
   post '/form' do
     @messages = Array.new unless @messages
     @title = 'result of form'
