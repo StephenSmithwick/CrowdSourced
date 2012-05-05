@@ -67,7 +67,7 @@ class Crowdsourced
 
 
     @twitterFeed = TwitterFeed.new() unless @twitterFeed
-    @messages = @twitterFeed.findTweets searchterm, suburb["lat"], suburb["lon"], "3km"
+    @messages = @twitterFeed.findTweets searchterm, suburb, "3km"
 
     @reviewProcessor = ReviewProcessor.new() unless @reviewProcessor
     @reviewProcessor.processReviews @messages, searchterm
