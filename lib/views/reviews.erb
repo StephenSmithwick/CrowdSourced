@@ -1,7 +1,15 @@
 <table>
+  <tr>
+    <th>Is A Review</th>
+    <th>Is it A good Review</th>
+    <th>The Term</th>
+    <th>The text of review</th>
+  </tr>
 <% @reviews.each do |review| %>
       <tr>
-      	<td><%= "#{review["liked"]}" %></td>
+        <td><%= "#{review["review"]}" %></td>
+        <td><%= "#{review["liked"]}" %></td>
+      	<td><%= "#{review["term"]}" %></td>
       	<td><%= "#{review["text"]}" %></td>
       </tr>
 <% end %>

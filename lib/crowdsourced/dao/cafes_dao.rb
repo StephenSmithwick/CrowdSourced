@@ -1,4 +1,5 @@
 require 'mongo'
+require 'bson'
 
 class CafesDAO
   def save(suburbId, name, rating, lat, lon)
@@ -7,8 +8,8 @@ class CafesDAO
     collCafes.insert({
               :suburbId => suburbId,
               :name => name,
-              :rating => rating, 
-              :lat => lat, 
+              :rating => rating,
+              :lat => lat,
               :lon => lon
     });
   end
@@ -23,5 +24,11 @@ class CafesDAO
       db = Mongo::Connection.new("localhost").db("mydb")
       collCafes = db.collection("Cafes")
       return collCafes.find(:suburbId => suburbId)
-    end
+  end
+  
+  def findById(id)
+      db = Mongo::Connection.new("localhost").db("mydb")
+      collCafes = db.collection("Cafes")
+      return collCafes.find_one(BSON::ObjectId.from_string(id))
+  end
 end

@@ -1,11 +1,19 @@
 require 'mongo'
 
 class ReviewDAO
-  def saveAll reviews
+  def saveAll term,messages
     db = Mongo::Connection.new("localhost").db("mydb")
     collTweets = db.collection("Tweets")
-    reviews.each do |review|
-      collTweets.insert({:text => review.review, :liked => review.liked?});
+
+    messages.each do |message|
+      puts  "saved id #{message[:id]}"
+      collTweets.insert({:text => message[:text],
+                         :liked => message[:review].liked?,
+                         :term => term,
+                         :review => message[:review].review? ,
+                         :suburb => message[:suburb]["id"]   ,
+                         :_id => message[:id]
+                        })
     end
   end
 
@@ -13,5 +21,11 @@ class ReviewDAO
     db = Mongo::Connection.new("localhost").db("mydb")
     collTweets = db.collection("Tweets")
     return collTweets.find
+  end
+
+  def saved? id
+    db = Mongo::Connection.new("localhost").db("mydb")
+    collTweets = db.collection("Tweets")
+    collTweets.find_one(_id:"#{id}")
   end
 end
