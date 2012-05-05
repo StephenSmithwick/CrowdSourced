@@ -6,7 +6,7 @@ class Place
 
   def self.init_all places_hash
     review_dao = ReviewDAO.new
-    places = places_hash.map {|hash| Place.new hash, review_dao }
+    places = places_hash.map { |hash| Place.new hash, review_dao }
 
     best = places.reduce(nil) do |best, contender|
       worse = best && best.reviews.positive_count > contender.reviews.positive_count
@@ -18,8 +18,8 @@ class Place
   end
 
   def initialize hash, review_dao = nil
-    @id = hash['_id']
-    @suburbId = hash['suburbId']
+    @id = hash['_id'].to_s
+    @suburbId = hash['suburbId'].to_s
     @type = hash['type']
     @name = hash['name']
     @lat = hash['lat']
@@ -55,7 +55,7 @@ class Place
     return @reviews if @reviews
     @review_dao = ReviewDAO.new unless @review_dao
 
-    @reviews = Reviews.new @review_dao.findReviewsForPlace(@id)
+    @reviews = Reviews.new @review_dao.findReviewsForPlace('_id' => @id)
   end
 
   def best!
@@ -68,7 +68,8 @@ class Reviews
   attr_accessor :reviews
 
   def initialize reviews
-      @reviews = reviews
+    @reviews = reviews.map {|review| review}
+    puts "reviews: [#{@reviews}]"
   end
 
   def count
@@ -76,6 +77,6 @@ class Reviews
   end
 
   def positive_count
-    @reviews.select{|review| review["liked"]}.count
+    @reviews.select { |review| review["liked"] }.count
   end
 end

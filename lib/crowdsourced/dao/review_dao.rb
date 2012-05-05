@@ -24,10 +24,10 @@ class ReviewDAO
     return collTweets.find
   end
 
-  def findReviewsForPlace place_id
+  def findReviewsForPlace place
     db = Mongo::Connection.new("localhost").db("mydb")
     collTweets = db.collection("Tweets")
-    return collTweets.find(:place => place_id, :review => true)
+    return collTweets.find(:place => place["_id"].to_s)
   end
 
   def saved? (id, term)

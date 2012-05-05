@@ -15,28 +15,28 @@ require_relative 'crowdsourced/place/place'
 class Crowdsourced
   # Initialize the list of Suburbs and Cafes
   get '/init' do
-      @title = 'Initialize CrowdSourced'
-      "Initialize CrowdSourced"
-      
-      db = Mongo::Connection.new("localhost").db("mydb")
-      db.collection("Suburbs").drop
-      db.collection("Place").drop
-      db.collection("Tweets").drop
-      
-      @reviewableProcessor = PlaceProcessor.new() unless @reviewableProcessor
-      @reviewableProcessor.initializeReviewable
+    @title = 'Initialize CrowdSourced'
+    "Initialize CrowdSourced"
+
+    db = Mongo::Connection.new("localhost").db("mydb")
+    db.collection("Suburbs").drop
+    db.collection("Place").drop
+    db.collection("Tweets").drop
+
+    @reviewableProcessor = PlaceProcessor.new() unless @reviewableProcessor
+    @reviewableProcessor.initializeReviewable
   end
 
   # Home page: Displays GMap and the list of cafes
   get '/' do
     @title = 'Reviews made by youse'
-    
+
     @suburbsDao = SuburbsDAO.new() unless @suburbsDao
     @suburbs = @suburbsDao.findAll
-    
+
     @placeDao = PlaceDao.new() unless @placeDao
-    @cafes = @placeDao.findBySuburb(@suburbs.next()["id"],"cafe")
-    
+    @cafes = @placeDao.findBySuburb(@suburbs.next()["id"], "cafe")
+
     erb :form
   end
 
@@ -54,7 +54,7 @@ class Crowdsourced
     @messages = @twitterFeed.findTweets searchterm, suburb, "3km"
 
     @reviewProcessor = ReviewProcessor.new() unless @reviewProcessor
-    @reviewProcessor.processReviews @messages, searchterm ,place
+    @reviewProcessor.processReviews @messages, searchterm, place
 
     erb :resultsOfForm
   end
@@ -71,7 +71,7 @@ class Crowdsourced
     suburb = @suburbsDao.findByName(params[:suburbName])
 
     @reviewProcessor = ReviewProcessor.new() unless @reviewProcessor
-    @messages = @reviewProcessor.processAllReviewsForPlace place,suburb
+    @messages = @reviewProcessor.processAllReviewsForPlace place, suburb
 
     erb :resultsOfForm
   end
@@ -81,7 +81,7 @@ class Crowdsourced
 
     @reviewProcessor = ReviewProcessor.new() unless @reviewProcessor
     @suburbsDao = SuburbsDAO.new() unless @suburbsDao
-    @messages = @reviewProcessor.processAllReviewsForSuburb  @suburbsDao.findByName(params[:suburbName])
+    @messages = @reviewProcessor.processAllReviewsForSuburb @suburbsDao.findByName(params[:suburbName])
 
     erb :resultsOfForm
   end
@@ -108,20 +108,20 @@ class Crowdsourced
     @title = 'result of form'
     db = Mongo::Connection.new.db("mydb")
     coll = db.collection("testCollection")
-    doc = { 'message' => params[:message]}
+    doc = {'message' => params[:message]}
     coll.insert(doc)
     search_string = params[:start]
 
-    coll.find( {:message => /^#{search_string}/}).each {|message|
-       @messages << message}
+    coll.find({:message => /^#{search_string}/}).each { |message|
+      @messages << message }
 
     erb :resultsOfForm
   end
-  
+
   # Returns a JSON list of Cafes for specified Suburb
   get '/places/:suburbId/:type' do
     @placeDao = PlaceDao.new() unless @placeDao
-    places_hash = @placeDao.findBySuburb(params[:suburbId],params[:type])
+    places_hash = @placeDao.findBySuburb(params[:suburbId], params[:type])
 
     places = Place.init_all places_hash
 
@@ -129,7 +129,7 @@ class Crowdsourced
 
     places.to_json
   end
-  
+
   # Returns Suburb in JSON form
   get '/suburb/:suburbId' do
     @suburbsDao = SuburbsDAO.new() unless @suburbsDao
@@ -138,15 +138,14 @@ class Crowdsourced
     content_type 'application/json'
     suburb.to_json
   end
-  
+
   # Returns a JSON list of reviews for a specified Cafe
   get '/place/reviews/:placeId' do
     @reviewDao = ReviewDAO.new() unless @reviewDao
-    reviews = @reviewDao.findReviewsForPlace(params[:placeId])
+    reviews = @reviewDao.findReviewsForPlace('_id' => params[:placeId])
 
     reviewsJson = Array.new
     reviews.each do |review|
-puts review.inspect
       reviewsJson << {"text" => review["text"], "liked" => review["liked"]}
     end
 
