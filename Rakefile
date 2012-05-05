@@ -19,7 +19,7 @@ end
 task :clean do
   db = Mongo::Connection.new("localhost").db("mydb")
   db.collection("Suburbs").drop
-  db.collection("Cafes").drop
+  db.collection("Place").drop
   db.collection("Tweets").drop
 end
 

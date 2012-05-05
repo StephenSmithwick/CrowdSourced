@@ -17,7 +17,7 @@ end
 def update_cafes(db)
   suburbs = retrieve_suburubs db
   suburbs.each do |suburb|
-    url = "https://maps.googleapis.com/maps/api/place/search/json?location=-" + suburb["lat"] + "," + suburb["lon"]  + "&radius=" + suburb["radius"]  + "&types=reviewable&sensor=false&key=AIzaSyC2pDpNpBWnlNYnBUX363XV5Aog4UdOjeg"
+    url = "https://maps.googleapis.com/maps/api/place/search/json?location=-" + suburb["lat"] + "," + suburb["lon"]  + "&radius=" + suburb["radius"]  + "&types=place&sensor=false&key=AIzaSyC2pDpNpBWnlNYnBUX363XV5Aog4UdOjeg"
       result = open(url) do |file|
         result = JSON.parse(file.read)
         result["results"].each do |location|
@@ -29,7 +29,7 @@ def update_cafes(db)
                     "lat" => location["geometry"]["location"]["lat"].to_s, 
                     "lon" => location["geometry"]["location"]["lng"].to_s
           });
-          # Get the list of Tweets for this reviewable in this Suburb
+          # Get the list of Tweets for this place in this Suburb
           parse_tweets db, suburb["name"], suburb["lat"] + "," + suburb["lon"] + ",3km", location["name"]
         end
       end
