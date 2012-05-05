@@ -69,7 +69,6 @@ class Reviews
 
   def initialize reviews
     @reviews = reviews.map {|review| review}
-    puts "reviews: [#{@reviews}]"
   end
 
   def count
