@@ -58,10 +58,11 @@
 							'bounds': true,
 							'icon': 'images/markers/cafe.png',
 							'place': data[i]}).click(function() {
-						var infoContent = this.place.name + ' (' + (this.place.rating * 20) + '%)<br/>';
-						infoContent += '<a onclick="loadReviews(\'' + this.place.id + '\');" href="#">Reviews</a>';
-						$('#map-canvas').gmap('openInfoWindow', { 'content': infoContent }, this);
-					});
+								$("#reviews").hide();
+								var infoContent = this.place.name + ' (' + (this.place.rating * 20) + '%)<br/>';
+								infoContent += '<a onclick="loadReviews(\'' + this.place.id + '\');" href="#">Reviews</a>';
+								$('#map-canvas').gmap('openInfoWindow', { 'content': infoContent }, this);
+							});
 			    }
 			    $("#select-cafe").html(html);
 		});
@@ -100,8 +101,8 @@
 	}
 	
 	function refreshReviews(placeId) {
-        $.getJSON("/processTweets/" + placeId,  function(data) {
+        $.get("/processTweets/" + placeId, function(data) {
         	loadReviews(placeId);
-        });
+		});
 	}
 </script>
