@@ -13,7 +13,8 @@ class ReviewDAO
                          :review => message[:review].review? ,
                          :suburb => message[:suburb]["_id"].to_s   ,
                          :_id => message[:id]   ,
-                         :place => place["_id"].to_s
+                         :place => place["_id"].to_s,
+                         :time_saved => time1 = Time.new
                         })
     end
   end
