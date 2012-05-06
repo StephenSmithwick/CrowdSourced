@@ -12,7 +12,7 @@ class ReviewDAO
                          :term => term,
                          :review => message[:review].review? ,
                          :suburb => message[:suburb]["_id"].to_s   ,
-                         :_id => message[:id]   ,
+                         :tweet_id => message[:id]   ,
                          :place => place["_id"].to_s,
                          :time_saved => time1 = Time.new
                         })
@@ -40,6 +40,7 @@ class ReviewDAO
   def saved? (id, term)
     db = Mongo::Connection.new("localhost").db("mydb")
     collTweets = db.collection("Tweets")
-    collTweets.find_one(:_id => id, :term => term)
+    puts "should i process #{id}"
+    collTweets.find_one(:tweet_id => id.to_s, :term => term)
   end
 end
