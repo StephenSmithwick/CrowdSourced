@@ -25,6 +25,11 @@ To Run
 2. Start Web Application
 `$ rake`
 
+To Load Database
+------
+`$ rake seed`
+`$ rake process_tweets`
+
 For Rake command Help
 ------
 `$ rake help`
