@@ -22,3 +22,12 @@ doc/
 
 # Intellij Files
 *.iml
+
+# Padrino
+.DS_Store
+log/**/*
+tmp/**/*
+bin/*
+vendor/gems/*
+!vendor/gems/cache/
+.sass-cache/*
